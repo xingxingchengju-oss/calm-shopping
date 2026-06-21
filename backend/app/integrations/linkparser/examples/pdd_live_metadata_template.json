@@ -1,0 +1,18 @@
+{
+  "https://mobile.yangkeduo.com/goods.html?ps=b2Ul9nQRia": {
+    "fetch_status": "resolved_from_logged_in_browser",
+    "goods_id": "944921625367",
+    "goods_name": "登录态或官方接口返回的商品名",
+    "min_group_price": 12990,
+    "market_price": 19990,
+    "category_name": "商品品类",
+    "mall_name": "店铺名",
+    "goods_gallery_urls": [
+      "https://example.com/pdd-main-image.jpg"
+    ],
+    "promotion_labels": [
+      "百亿补贴",
+      "限时"
+    ]
+  }
+}

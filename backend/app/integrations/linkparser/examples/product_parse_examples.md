@@ -1,0 +1,207 @@
+# 商品链接解析示例
+
+说明：以下结果由分享文本解析、短链/跳转恢复和浏览器渲染补充生成。能恢复的字段直接写入统一商品对象；平台登录或风控导致不可取的字段会保留为空，并在 `recognition.missing_fields` 和 `raw_source.live_metadata` 中说明原因。
+
+## 1. taobao
+
+- 商品名：X影驰RTX5060TI/5070TI/5080/5090名人堂台式机电脑独立游戏显卡
+- 原始链接：https://e.tb.cn/h.RLiCrsU28uLGSKX?tk=ejKGgT8h0To
+- 清洗链接：https://item.taobao.com/item.htm?id=1057177970429
+- 商品 ID：1057177970429
+- 当前价格：23737
+- 品类：未识别
+- 店铺：未识别（unknown）
+- 主图：未识别
+- 促销刺激：大促, 价保
+- 抓取状态：resolved_from_redirect_html
+- 详情限制：淘宝详情页会请求 mtop.taobao.detail.data.get，但未登录/风控场景会跳转淘宝登录页，不下发主图、店铺和品类。
+- 缺失字段：product_category
+- 需要用户确认：False
+
+```json
+{
+  "source_platform": "taobao",
+  "input_source": "link",
+  "original_url": "https://e.tb.cn/h.RLiCrsU28uLGSKX?tk=ejKGgT8h0To",
+  "canonical_url": "https://item.taobao.com/item.htm?id=1057177970429",
+  "product_id": "1057177970429",
+  "product_name": "X影驰RTX5060TI/5070TI/5080/5090名人堂台式机电脑独立游戏显卡",
+  "product_category": null,
+  "price": {
+    "current_price": 23737,
+    "original_price": null,
+    "coupon_price": null,
+    "currency": "CNY"
+  },
+  "promotion_stimuli": [
+    "大促",
+    "价保"
+  ],
+  "shop": {
+    "shop_name": null,
+    "shop_type": "unknown"
+  },
+  "images": {
+    "main_image": null
+  },
+  "sku": {
+    "sku_id": null,
+    "selected_specs": {}
+  },
+  "recognition": {
+    "confidence": 0.9,
+    "missing_fields": [
+      "product_category"
+    ],
+    "needs_user_confirmation": false
+  },
+  "raw_source": {
+    "share_text": "【淘宝】大促价保 https://e.tb.cn/h.RLiCrsU28uLGSKX?tk=ejKGgT8h0To CZ321 「X影驰RTX5060TI/5070TI/5080/5090名人堂台式机电脑独立游戏显卡」\n点击链接直接打开 或者 淘宝搜索直接打开",
+    "live_metadata": {
+      "product_id": "1057177970429",
+      "canonical_url": "https://item.taobao.com/item.htm?id=1057177970429",
+      "current_price": 23737,
+      "fetch_status": "resolved_from_redirect_html",
+      "final_url": "https://e.tb.cn/h.RLiCrsU28uLGSKX?tk=ejKGgT8h0To",
+      "detail_fetch_status": "login_required",
+      "detail_blocking_reason": "淘宝详情页会请求 mtop.taobao.detail.data.get，但未登录/风控场景会跳转淘宝登录页，不下发主图、店铺和品类。",
+      "required_resolution": "使用淘宝开放平台/淘宝联盟接口，或使用已登录浏览器态补齐主图、店铺和品类。"
+    }
+  }
+}
+```
+
+## 2. jd
+
+- 商品名：Apple/苹果 AirPods 4
+- 原始链接：https://3.cn/2S-KRZ0i?jkl=@P1t2B3MTzq@
+- 清洗链接：https://item.jd.com/100142621566.html
+- 商品 ID：100142621566
+- 当前价格：776
+- 品类：数码/影音娱乐/蓝牙耳机
+- 店铺：Apple产品京东自营旗舰店（自营）
+- 主图：https://m.360buyimg.com/mobilecms/s750x750_jfs/t1/448962/36/17096/118150/6a341741Ffa85e618/00835dc5dc571c8d.png!q80.dpg.webp
+- 促销刺激：未识别
+- 抓取状态：resolved_from_browser_render
+- 详情限制：无
+- 缺失字段：无
+- 需要用户确认：False
+
+```json
+{
+  "source_platform": "jd",
+  "input_source": "link",
+  "original_url": "https://3.cn/2S-KRZ0i?jkl=@P1t2B3MTzq@",
+  "canonical_url": "https://item.jd.com/100142621566.html",
+  "product_id": "100142621566",
+  "product_name": "Apple/苹果 AirPods 4",
+  "product_category": "数码/影音娱乐/蓝牙耳机",
+  "price": {
+    "current_price": 776,
+    "original_price": null,
+    "coupon_price": null,
+    "currency": "CNY"
+  },
+  "promotion_stimuli": [],
+  "shop": {
+    "shop_name": "Apple产品京东自营旗舰店",
+    "shop_type": "自营"
+  },
+  "images": {
+    "main_image": "https://m.360buyimg.com/mobilecms/s750x750_jfs/t1/448962/36/17096/118150/6a341741Ffa85e618/00835dc5dc571c8d.png!q80.dpg.webp"
+  },
+  "sku": {
+    "sku_id": "100142621566",
+    "selected_specs": {}
+  },
+  "recognition": {
+    "confidence": 0.95,
+    "missing_fields": [],
+    "needs_user_confirmation": false
+  },
+  "raw_source": {
+    "share_text": "【京东】https://3.cn/2S-KRZ0i?jkl=@P1t2B3MTzq@ MF8555 「Apple/苹果 AirPods 4」\n点击链接直接打开 或者复制文案打开京东",
+    "live_metadata": {
+      "product_id": "100142621566",
+      "canonical_url": "https://item.jd.com/100142621566.html",
+      "current_price": 776,
+      "fetch_status": "resolved_from_browser_render",
+      "final_url": "https://trade.m.jd.com/common/limit.html?module=detail_m1&referer=http://item.m.jd.com/product/100142621566.html?utm_term=CopyURL_shareid8a6dcbb9a93f0404fd63db88cd1a76a56a519baf17818654642772_shangxiang_none&gx=RnAomTM2Cku8t9xA8s4rOW5n3ESW1A&utm_source=iosapp&utm_campaign=t_335139774&utm_medium=appshare&ad_od=share&gxd=RnAoyzZfPGeLmZFEpochXevP4Tv8rPHIwiXXeniOLzuQa1xI63WuT_ZcFfzBvYs&jkl=@P1t2B3MTzq@",
+      "price_source_text": "购买不超过4件时享受单件价￥776，超出数量以结算价为准，限购买4次",
+      "product_category": "数码/影音娱乐/蓝牙耳机",
+      "main_image": "https://m.360buyimg.com/mobilecms/s750x750_jfs/t1/448962/36/17096/118150/6a341741Ffa85e618/00835dc5dc571c8d.png!q80.dpg.webp",
+      "shop_name": "Apple产品京东自营旗舰店",
+      "shop_type": "自营",
+      "rendered_price_text": "¥7??",
+      "rendered_price_note": "京东页面未登录时隐藏完整价格，只能看到脱敏价格文本。"
+    }
+  }
+}
+```
+
+## 3. pdd
+
+- 商品名：未识别
+- 原始链接：https://mobile.yangkeduo.com/goods.html?ps=b2Ul9nQRia
+- 清洗链接：https://mobile.yangkeduo.com/goods.html?goods_id=944921625367
+- 商品 ID：944921625367
+- 当前价格：未识别
+- 品类：未识别
+- 店铺：未识别（unknown）
+- 主图：未识别
+- 促销刺激：未识别
+- 抓取状态：login_required
+- 详情限制：拼多多未登录页面跳转到登录页，服务端 HTML 仅返回 needLogin=true，不下发商品名、价格和主图。
+- 缺失字段：product_name, price.current_price, product_category
+- 需要用户确认：True
+
+```json
+{
+  "source_platform": "pdd",
+  "input_source": "link",
+  "original_url": "https://mobile.yangkeduo.com/goods.html?ps=b2Ul9nQRia",
+  "canonical_url": "https://mobile.yangkeduo.com/goods.html?goods_id=944921625367",
+  "product_id": "944921625367",
+  "product_name": null,
+  "product_category": null,
+  "price": {
+    "current_price": null,
+    "original_price": null,
+    "coupon_price": null,
+    "currency": "CNY"
+  },
+  "promotion_stimuli": [],
+  "shop": {
+    "shop_name": null,
+    "shop_type": "unknown"
+  },
+  "images": {
+    "main_image": null
+  },
+  "sku": {
+    "sku_id": null,
+    "selected_specs": {}
+  },
+  "recognition": {
+    "confidence": 0.5,
+    "missing_fields": [
+      "product_name",
+      "price.current_price",
+      "product_category"
+    ],
+    "needs_user_confirmation": true
+  },
+  "raw_source": {
+    "share_text": "https://mobile.yangkeduo.com/goods.html?ps=b2Ul9nQRia",
+    "live_metadata": {
+      "product_id": "944921625367",
+      "canonical_url": "https://mobile.yangkeduo.com/goods.html?goods_id=944921625367",
+      "current_price": null,
+      "fetch_status": "login_required",
+      "final_url": "https://mobile.yangkeduo.com/goods.html?refer_share_id=2414Iw49LIK4Fhe9MF8HP6CQDhqmSdRX&refer_share_channel=copy_link&_oak_share_detail_id=27270951055&_oc_trace_mark=199&pxq_secret_key=MCAOZE4FPJEAXI6HXN55OQJ2QVB5JPZOCXPPEW7PX66GHLV4WN2A&_oak_share_time=1781865495&share_oak_rcto=YWJO9s5QhWElxuCYmHjXrqWIqA7iyyfQOhf3iSrTsNPiwt67HHrrtElz&share_uin=73H7HKY6RPCCNA2PNAVTBMWU6Y_GEXDA&page_from=26&refer_share_uin=73H7HKY6RPCCNA2PNAVTBMWU6Y_GEXDA&goods_id=944921625367&_oak_share_snapshot_num=235&_oak_share_ticket=01-0000000029-587ffe26b24f6d0315b141f35628f2d4a2cf7a3c0d3c99f5177f4a97a461984a-1783161496",
+      "blocking_reason": "拼多多未登录页面跳转到登录页，服务端 HTML 仅返回 needLogin=true，不下发商品名、价格和主图。",
+      "required_resolution": "使用已登录浏览器态、拼多多开放平台/多多进宝接口，或用户商品截图/OCR 补齐商品字段。"
+    }
+  }
+}
+```

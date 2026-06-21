@@ -1,0 +1,10 @@
+# 冷静购 后端依赖（MVP）
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+anthropic>=0.39          # Claude：消费分析 / 测评解读 / 好坏提炼（无 key 时降级为规则）
+requests>=2.32           # 检索 / 抓取
+httpx>=0.27              # 链接解析 / 异步外呼
+# OCR（截图识别，二选一，后续接入）
+# pytesseract>=0.3.10
+# Pillow>=10.0

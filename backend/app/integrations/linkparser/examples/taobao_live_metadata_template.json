@@ -1,0 +1,16 @@
+{
+  "https://e.tb.cn/h.RLiCrsU28uLGSKX?tk=ejKGgT8h0To": {
+    "fetch_status": "resolved_from_taobao_api",
+    "item_id": "1057177970429",
+    "item_title": "淘宝开放平台或登录态返回的商品名",
+    "zk_final_price": "23737",
+    "reserve_price": "25999",
+    "category_name": "电脑硬件/显卡",
+    "shop_title": "店铺名",
+    "pict_url": "https://img.alicdn.com/example/taobao-main-image.jpg",
+    "promotion_labels": [
+      "大促",
+      "价保"
+    ]
+  }
+}

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>冷静购 · 豚豚陪你冷静一下</title>
+<style>
+  :root { --bg:#eef6fb; --card:#fff; --ink:#1f3a4d; --muted:#6b8a9c; --teal:#2a9d8f; --blue:#3a7bd5; --warn:#e9785b; --line:#d9e8f1; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif; background:var(--bg); color:var(--ink); }
+  .wrap { max-width:680px; margin:0 auto; padding:24px 16px 64px; }
+  h1 { font-size:22px; margin:8px 0 2px; }
+  .sub { color:var(--muted); font-size:13px; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; margin:14px 0; box-shadow:0 2px 10px rgba(58,123,213,.05); }
+  textarea { width:100%; min-height:84px; border:1px solid var(--line); border-radius:12px; padding:12px; font-size:14px; resize:vertical; }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  button { font-size:15px; border:0; border-radius:12px; padding:11px 18px; cursor:pointer; background:var(--blue); color:#fff; }
+  button.ghost { background:#eaf2fb; color:var(--blue); }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  .pill { display:inline-block; background:#eaf6f4; color:var(--teal); border-radius:999px; padding:3px 10px; font-size:12px; margin:2px 4px 2px 0; }
+  .pill.warn { background:#fdeee9; color:var(--warn); }
+  .muted { color:var(--muted); font-size:13px; }
+  .q { margin:16px 0; padding-top:14px; border-top:1px dashed var(--line); }
+  .q:first-child { border-top:0; }
+  .qtitle { font-weight:600; margin-bottom:4px; }
+  .qreason { color:var(--muted); font-size:12px; margin-bottom:10px; }
+  .chip { display:inline-block; border:1px solid var(--line); border-radius:999px; padding:8px 14px; margin:4px 6px 0 0; cursor:pointer; user-select:none; font-size:14px; background:#fafdff; }
+  .chip.on { background:var(--blue); color:#fff; border-color:var(--blue); }
+  input[type=range] { width:100%; }
+  input[type=text] { width:100%; border:1px solid var(--line); border-radius:10px; padding:10px; font-size:14px; }
+  .lean { display:inline-block; border-radius:999px; padding:4px 12px; font-weight:600; font-size:13px; }
+  .lean.let_go { background:#fdeee9; color:var(--warn); }
+  .lean.buy { background:#eaf6f4; color:var(--teal); }
+  .lean.keep_floating { background:#eaf2fb; color:var(--blue); }
+  .act { background:#f4f9fd; color:var(--ink); border:1px solid var(--line); }
+  .act.hl { outline:2px solid var(--blue); }
+  .spin { display:none; color:var(--muted); font-size:13px; }
+  .err { color:var(--warn); font-size:13px; }
+  h3 { margin:4px 0 8px; font-size:16px; }
+  .kv { font-size:14px; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🌊 冷静购</h1>
+  <div class="sub">丢一个商品链接 / 分享文案进来，豚豚陪你冷静 90 秒再决定。</div>
+
+  <div class="card">
+    <textarea id="text">【淘宝】大促价保 https://e.tb.cn/h.RLiCrsU28uLGSKX?tk=ejKGgT8h0To CZ321 「X影驰RTX5060TI/5070TI/5080/5090名人堂台式机电脑独立游戏显卡」</textarea>
+    <div class="row" style="margin-top:10px">
+      <button id="go">丢给豚豚 →</button>
+      <button class="ghost" id="shot" title="上传商品页截图，豚豚帮你认">📷 上传截图</button>
+      <input type="file" id="file" accept="image/*" hidden>
+      <span class="spin" id="spin">豚豚正在看图 / 翻真实评价 + 看行情…（约 10-20 秒）</span>
+    </div>
+    <img id="preview" alt="截图预览" style="display:none;max-height:130px;border-radius:10px;margin-top:10px;border:1px solid var(--line)">
+    <div class="err" id="err"></div>
+  </div>
+
+  <div id="quiz"></div>
+  <div id="report"></div>
+</div>
+
+<script>
+let SID = null, QS = [];
+const $ = s => document.querySelector(s);
+
+async function recognize(payload){
+  $("#err").textContent = ""; $("#quiz").innerHTML = ""; $("#report").innerHTML = "";
+  $("#spin").style.display = "inline"; $("#go").disabled = true; $("#shot").disabled = true;
+  try {
+    const r = await fetch("/api/recognize", {method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(payload)});
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || "出错了");
+    if (!d.ok) { $("#err").textContent = d.message; return; }
+    renderQuiz(d);
+  } catch(e){ $("#err").textContent = e.message; }
+  finally { $("#spin").style.display = "none"; $("#go").disabled = false; $("#shot").disabled = false; }
+}
+
+$("#go").onclick = () => recognize({text: $("#text").value});
+$("#shot").onclick = () => $("#file").click();
+$("#file").onchange = (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    $("#preview").src = rd.result; $("#preview").style.display = "block";
+    recognize({image: rd.result});
+  };
+  rd.readAsDataURL(f);
+};
+
+function renderQuiz(d){
+  SID = d.session_id; QS = d.questionnaire.questions;
+  const p = d.product, rv = d.review, pr = d.pricing;
+  let html = `<div class="card">
+    <h3>🛒 ${p.name||"商品"} <span class="muted">· ${p.platform} · ¥${p.price ?? "—"} · ${p.category||"—"}</span></h3>
+    <div class="kv"><b>真香点</b>：${(rv.pros||[]).map(x=>`<span class="pill">${x}</span>`).join("")||"—"}<br>
+    <b>避雷点</b>：${(rv.cons||[]).map(x=>`<span class="pill warn">${x}</span>`).join("")||"—"}</div>`;
+  if (pr) html += `<div class="kv" style="margin-top:6px"><b>行情</b>：${pr.verdict} · 趋势 ${pr.trend} — ${pr.assessment}</div>`;
+  html += `<div class="muted" style="margin-top:6px">${rv.sources||""}</div></div>`;
+
+  html += `<div class="card"><div style="margin-bottom:4px">🫧 ${d.questionnaire.intro}</div>`;
+  d.questionnaire.questions.forEach((q,i)=> html += renderQ(q,i));
+  html += `<div class="row" style="margin-top:18px"><button id="submit">看看冷静报告 →</button></div></div>`;
+  $("#quiz").innerHTML = html;
+  $("#submit").onclick = submit;
+}
+
+function renderQ(q, i){
+  let body = "";
+  if (["bubble_multi","bubble_single","two_choice"].includes(q.interaction_type)){
+    const multi = q.interaction_type === "bubble_multi";
+    body = `<div data-q="${q.id}" data-multi="${multi}">` +
+      q.options.map(o=>`<span class="chip" data-v="${o.value}" onclick="pick(this,${multi})">${o.label}</span>`).join("") + `</div>`;
+  } else if (q.interaction_type === "slider"){
+    const s = q.slider;
+    body = `<input type="range" data-q="${q.id}" min="${s.min}" max="${s.max}" step="${s.step}" value="${s.min}"
+              oninput="this.nextElementSibling.textContent=this.value+' 次/月'">
+            <span class="muted">${s.min} 次/月</span>
+            <div class="muted">${s.min_label} ⟷ ${s.max_label}</div>`;
+  } else {
+    body = `<input type="text" data-q="${q.id}" placeholder="${(q.input&&q.input.placeholder)||""}">`;
+  }
+  return `<div class="q"><div class="qtitle">${i+1}. ${q.question}</div>
+    <div class="qreason">↳ ${q.question_reason||""}</div>${body}</div>`;
+}
+
+function pick(el, multi){
+  if (!multi){ el.parentNode.querySelectorAll(".chip").forEach(c=>c.classList.remove("on")); }
+  el.classList.toggle("on");
+}
+
+function collect(){
+  return QS.map(q=>{
+    const el = document.querySelector(`[data-q="${q.id}"]`);
+    let value;
+    if (["bubble_multi","bubble_single","two_choice"].includes(q.interaction_type)){
+      const on = [...el.querySelectorAll(".chip.on")].map(c=>c.dataset.v);
+      value = q.interaction_type==="bubble_multi" ? on : (on[0]||"");
+    } else if (q.interaction_type==="slider"){ value = parseInt(el.value); }
+    else { value = el.value.trim(); }
+    return {id:q.id, value};
+  });
+}
+
+async function submit(){
+  $("#submit").disabled = true; $("#submit").textContent = "豚豚在写报告…";
+  try{
+    const r = await fetch("/api/report", {method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({session_id: SID, answers: collect()})});
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail||"出错了");
+    renderReport(d);
+  } catch(e){ $("#err").textContent = e.message; }
+  finally { $("#submit").disabled=false; $("#submit").textContent="看看冷静报告 →"; }
+}
+
+function renderReport(d){
+  const conf = {high:"高",medium:"中",low:"低"}[d.confidence]||d.confidence;
+  const html = `<div class="card">
+    <h3>📋 冷静报告 <span class="lean ${d.lean}">${labelOf(d.lean)}</span> <span class="muted">· 置信 ${conf}</span></h3>
+    <div class="kv"><b>风评里看到</b>：${d.review_digest}<br>
+    <b>你的信号</b>：${d.your_signals}<br>
+    <b>豚豚建议</b>：${d.suggestion_text}</div>
+    <div class="row" style="margin-top:14px">
+      ${d.actions.map(a=>`<button class="act ${a.key===d.lean?'hl':''}" onclick="chose('${a.label}')">${a.label}</button>`).join("")}
+    </div>
+    <div class="muted" id="chose" style="margin-top:10px"></div>
+  </div>`;
+  $("#report").innerHTML = html;
+  $("#report").scrollIntoView({behavior:"smooth"});
+}
+function labelOf(l){ return {buy:"更偏向 · 买下它",keep_floating:"更偏向 · 继续漂着",let_go:"更偏向 · 放手啦"}[l]||l; }
+function chose(label){ $("#chose").textContent = `你选择了：「${label}」🌊 已记下，决定权一直在你手里～`; }
+</script>
+</body>
+</html>

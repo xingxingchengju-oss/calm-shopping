@@ -1,0 +1,23 @@
+{
+  "https://e.tb.cn/h.RLiCrsU28uLGSKX?tk=ejKGgT8h0To": {
+    "detail_fetch_status": "login_required",
+    "detail_blocking_reason": "淘宝详情页会请求 mtop.taobao.detail.data.get，但未登录/风控场景会跳转淘宝登录页，不下发主图、店铺和品类。",
+    "required_resolution": "使用淘宝开放平台/淘宝联盟接口，或使用已登录浏览器态补齐主图、店铺和品类。"
+  },
+  "https://3.cn/2S-KRZ0i?jkl=@P1t2B3MTzq@": {
+    "current_price": 776,
+    "price_source_text": "购买不超过4件时享受单件价￥776，超出数量以结算价为准，限购买4次",
+    "product_category": "数码/影音娱乐/蓝牙耳机",
+    "main_image": "https://m.360buyimg.com/mobilecms/s750x750_jfs/t1/448962/36/17096/118150/6a341741Ffa85e618/00835dc5dc571c8d.png!q80.dpg.webp",
+    "shop_name": "Apple产品京东自营旗舰店",
+    "shop_type": "自营",
+    "fetch_status": "resolved_from_browser_render",
+    "rendered_price_text": "¥7??",
+    "rendered_price_note": "京东页面未登录时隐藏完整价格，只能看到脱敏价格文本。"
+  },
+  "https://mobile.yangkeduo.com/goods.html?ps=b2Ul9nQRia": {
+    "fetch_status": "login_required",
+    "blocking_reason": "拼多多未登录页面跳转到登录页，服务端 HTML 仅返回 needLogin=true，不下发商品名、价格和主图。",
+    "required_resolution": "使用已登录浏览器态、拼多多开放平台/多多进宝接口，或用户商品截图/OCR 补齐商品字段。"
+  }
+}

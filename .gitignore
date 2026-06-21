@@ -1,0 +1,33 @@
+# ---- 通用 ----
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+
+# ---- 前端 (Node) ----
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.local
+
+# ---- 后端 (Python) ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- 工具 / 数据 ----
+# 小红书爬虫输出
+tools/**/data/rednote_output_*.json
+
+# 本地上传 / 临时文件
+uploads/
+tmp/

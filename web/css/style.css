@@ -1,0 +1,483 @@
+/* ============================================================
+   水豚陪伴 v3 · 晴日河湾村 · 黏土治愈系 / 克制奖励
+   河湾(水面) 与 漂着(水下) 是「同一片连续的水」的上下两层。
+   字体：Baloo 2（英文/数字）+ Zen Maru Gothic（中文圆体）。
+   ============================================================ */
+:root{
+  --grass:#a3d77e; --grass-d:#7fbc5f; --grass-l:#c7e7a4;
+  --wood:#d6a464; --wood-d:#b07e44; --wood-dd:#8a5f30; --wood-l:#ecc892;
+  --cream:#fbf2df; --cream-2:#f4e6c8; --paper:#fffaef;
+  --water-1:#8fd6cd; --water-2:#4fb0a8; --water-3:#2f7d79; --water-deep:#1e5a5a; --water-edge:#5fbcb4;
+  --fur:#c8a982; --fur-d:#a8855e; --fur-l:#e6cfa5; --muzzle:#9a7d57;
+  --yuzu:#f7c948; --yuzu-d:#e09a1c; --leaf:#74b86a; --leaf-d:#4f9a55;
+  --ink:#5a4632; --ink-2:#8a7559; --muted:#b7a585; --blush:#ef9f88;
+  --line:#ecddbe; --line-2:#e0caa0;
+  --font:"Baloo 2","Zen Maru Gothic",sans-serif;
+  --clay:0 8px 16px rgba(150,108,48,.16);
+  --dev-w:393px; --dev-h:852px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:var(--font);}
+html,body{margin:0;min-height:100%;color:var(--ink);background:#e6d8be;}
+body{display:grid;place-items:center;padding:24px 14px 44px;}
+.stage{display:grid;gap:14px;justify-items:center;}
+.stage-cap{font-size:12px;font-weight:600;letter-spacing:.3em;color:#9a8a6e;}
+.device{width:var(--dev-w);height:var(--dev-h);border:11px solid #2d2418;border-radius:54px;background:#2d2418;box-shadow:0 30px 80px rgba(60,45,20,.45);position:relative;overflow:hidden;}
+.device::before{content:"";position:absolute;z-index:60;top:12px;left:50%;transform:translateX(-50%);width:118px;height:33px;border-radius:18px;background:#1d160c;}
+.screen{position:absolute;inset:0;border-radius:43px;overflow:hidden;background:var(--cream);}
+.statusbar{position:absolute;z-index:30;top:0;left:0;right:0;height:56px;padding:19px 30px 0;display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:#43605c;pointer-events:none;}
+
+.title{margin:0 2px 16px;}
+.title h1{margin:0;font-size:25px;font-weight:700;letter-spacing:.02em;color:var(--ink);}
+
+/* ============ 上下两层「同一片水」 ============ */
+.world{position:absolute;z-index:2;inset:0 0 92px;overflow:hidden;}
+.worldtrack{position:absolute;top:0;left:0;right:0;transition:transform .7s cubic-bezier(.6,.02,.2,1);}
+.surface,.under{position:relative;height:760px;overflow:hidden;}
+
+/* ---- 河湾村：上半是天，下半是一整片水，水豚浮在水面 ---- */
+.surface{background:linear-gradient(180deg,
+   #cfeaf0 0%, #c4e8ee 12%, #dbefe3 19%,
+   #bfe39a 25%, #a8d483 34%, #a0ce7a 43%,
+   #a8d6b0 47%, #86d0c8 51%, #6cc3ba 61%, #5fbcb4 73%, #4bb0a8 86%, #46a39c 100%);
+  position:relative;}
+/* 水面与水下是「同一片水」：背景渐变在 760px 接缝处首尾同色(#46a39c)，
+   光柱改由 track 层贯穿，故不再叠加接缝高光，避免接缝出现一条亮带 */
+.home-top{position:absolute;z-index:8;top:68px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;}
+.home-top h1{margin:0;font-size:24px;font-weight:700;letter-spacing:.02em;color:#36544b;}
+/* 纯展示的状态标签：去掉 pill 的高光/投影（不再伪装成可点按钮） */
+.streak{display:flex;align-items:center;gap:7px;background:none;padding:0;}
+.streak .yz{display:flex;gap:3px;}
+.streak .yz i{width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#ffe79a,var(--yuzu-d));box-shadow:inset 0 -2px 0 rgba(160,110,10,.3);}
+.streak .yz i.off{background:#e9dcc0;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05);}
+.streak b{font-weight:700;font-size:13px;color:var(--ink);}
+
+/* 红框场景（天空+水豚+水面）整体下移一点，标题保持不动 */
+.scene{position:absolute;top:22px;left:0;right:0;}
+.sky-amb{position:absolute;left:0;right:0;top:104px;height:140px;}
+.sun{position:absolute;right:36px;top:4px;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 40% 38%,#fff6d4,#ffdf76);box-shadow:0 0 0 11px rgba(255,236,150,.3),0 0 38px rgba(255,220,120,.55);animation:sunpulse 6s ease-in-out infinite;}
+.cloud{position:absolute;border-radius:40px;background:#fff;opacity:.92;}
+.cloud::before,.cloud::after{content:"";position:absolute;border-radius:50%;background:#fff;}
+.cloud.c1{left:34px;top:16px;width:58px;height:19px;animation:drift 26s linear infinite;}
+.cloud.c1::before{width:27px;height:27px;left:8px;top:-12px;}
+.cloud.c1::after{width:19px;height:19px;left:33px;top:-8px;}
+.cloud.c2{left:176px;top:42px;width:44px;height:15px;opacity:.8;animation:drift 34s linear infinite 5s;}
+.cloud.c2::before{width:19px;height:19px;left:8px;top:-8px;}
+.hill{position:absolute;top:64px;left:-34px;width:188px;height:120px;border-radius:50%;background:#bce29a;opacity:.7;}
+.hill.r{left:auto;right:-44px;width:210px;background:#aedd8c;}
+.tree{position:absolute;top:54px;}
+.tree i{position:absolute;top:34px;left:-7px;width:14px;height:30px;border-radius:6px;background:var(--wood-d);}
+/* 平涂树冠（与无渐变的水豚一致）：纯色 + 一道扁平的暗部，不用渐变 */
+.tree b{position:absolute;top:0;left:-26px;width:52px;height:50px;border-radius:50% 50% 46% 46%;background:#8fc96a;box-shadow:inset -6px -8px 0 rgba(95,150,70,.32);}
+.tree.t1{left:52px;} .tree.t2{right:56px;transform:scale(.8);}
+
+/* 水面：贯穿屏宽的水面线 + 水豚浮在上面 */
+.wline{position:absolute;left:0;right:0;top:268px;height:16px;background:rgba(255,255,255,.5);border-radius:50%;filter:blur(1.5px);z-index:3;}
+.lantern2{position:absolute;top:226px;width:17px;height:23px;border-radius:6px 6px 7px 7px;background:linear-gradient(#ffd86b,#e8a31e);box-shadow:0 0 13px rgba(232,163,30,.5),inset 0 -3px 0 rgba(0,0,0,.12);z-index:4;}
+.lantern2::before{content:"";position:absolute;top:-9px;left:50%;width:2px;height:9px;background:var(--wood-dd);transform:translateX(-50%);}
+.lantern2.ll{left:30px;} .lantern2.lr{right:34px;top:234px;transform:scale(.85);}
+.steam{position:absolute;width:9px;height:50px;border-radius:50%;background:linear-gradient(rgba(255,255,255,.7),transparent);filter:blur(4px);opacity:0;z-index:4;}
+.steam.s1{left:33%;top:208px;animation:steam 7s ease-in-out infinite;}
+.steam.s2{left:64%;top:214px;animation:steam 7s ease-in-out infinite 3.2s;}
+.yuzuf{position:absolute;width:20px;height:18px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#ffe79a,var(--yuzu));box-shadow:0 2px 5px rgba(0,0,0,.12);z-index:4;}
+.yuzuf::after{content:"";position:absolute;left:50%;top:-4px;width:7px;height:6px;border-radius:0 80% 0 80%;background:var(--leaf);transform:translateX(-50%);}
+.yuzuf.y1{left:54px;top:348px;animation:floatx 6s ease-in-out infinite;}
+.yuzuf.y2{right:58px;top:360px;animation:floatx 6s ease-in-out infinite 2.5s;}
+/* 河岸：一整片草滩连到画面两侧与上方（不是漂浮的台子），有机水岸线 + 草丛/卵石/水波 */
+.bank{position:absolute;left:50%;top:250px;transform:translateX(-50%);width:372px;height:auto;z-index:3;pointer-events:none;display:block;}
+
+/* 趴在岸边的水豚：直接用素材图 水豚.png（已去掉自带水洼）；侧躺不漂浮，只留极轻的呼吸 */
+.capy{position:absolute;left:50%;top:176px;transform:translateX(-50%);width:208px;height:121px;z-index:5;cursor:pointer;transform-origin:50% 90%;}
+.capy.breathe{animation:breathe 5.5s ease-in-out infinite;}
+.capy-img{width:100%;height:100%;display:block;object-fit:contain;-webkit-user-drag:none;user-select:none;filter:drop-shadow(0 5px 7px rgba(120,90,40,.16));}
+.say{position:absolute;left:50%;top:128px;transform:translateX(-50%);z-index:7;background:var(--paper);border-radius:18px;padding:10px 18px;font-weight:600;font-size:13px;color:var(--ink);white-space:nowrap;box-shadow:0 5px 14px rgba(120,90,40,.18);line-height:1.4;max-width:280px;}
+.say::after{content:"";position:absolute;left:70%;bottom:-6px;transform:translateX(-50%);border:9px solid transparent;border-top-color:var(--paper);border-bottom:0;filter:drop-shadow(0 2px 3px rgba(120,90,40,.1));}
+
+/* 输入 + 任务，浮在水面上 */
+.deck{position:absolute;z-index:6;left:20px;right:20px;top:392px;}
+.caster{background:linear-gradient(180deg,var(--paper),#fdf3df);border-radius:22px;padding:13px;box-shadow:var(--clay),inset 0 2px 0 rgba(255,255,255,.6);}
+.caster-row{display:flex;align-items:center;gap:9px;background:var(--cream);border-radius:15px;padding:4px 6px 4px 13px;box-shadow:inset 0 2px 5px rgba(120,90,40,.12);}
+.caster-row .lk{width:18px;height:18px;color:var(--muted);flex:none;}
+.caster-row input{flex:1;min-width:0;border:0;background:none;outline:none;padding:11px 0;font-size:13px;color:var(--ink);font-family:"PingFang SC","SF Pro","Helvetica Neue",sans-serif;}
+.caster-row input::placeholder{color:var(--muted);font-family:"PingFang SC","SF Pro","Helvetica Neue",sans-serif;}
+.shot{width:36px;height:36px;flex:none;border:0;border-radius:11px;background:var(--cream-2);color:var(--wood-dd);display:grid;place-items:center;cursor:pointer;}
+.shot svg{width:18px;height:18px;}
+.cast-go{margin-top:10px;width:100%;border:0;border-radius:15px;padding:13px 0;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:15px;color:#fff;cursor:pointer;background:var(--water-2);box-shadow:0 5px 0 var(--water-3);transition:transform .12s,box-shadow .12s;}
+.cast-go:active{transform:translateY(3px);box-shadow:0 2px 0 var(--water-3);}
+.cast-go svg{width:20px;height:20px;}
+.quest{display:flex;align-items:center;gap:13px;margin-top:12px;background:linear-gradient(180deg,#fff5dd,#fbe9c4);border-radius:18px;padding:11px 15px;box-shadow:var(--clay),inset 0 2px 0 rgba(255,255,255,.5);}
+.quest .qi{width:36px;height:36px;flex:none;border-radius:50%;background:radial-gradient(circle at 36% 30%,#ffe79a,var(--yuzu-d));box-shadow:inset 0 -3px 0 rgba(160,110,10,.3);position:relative;}
+.quest .qi::after{content:"";position:absolute;left:50%;top:-4px;width:8px;height:7px;border-radius:0 80% 0 80%;background:var(--leaf);transform:translateX(-50%);}
+.quest .qm{flex:1;min-width:0;}
+.quest .qm h4{margin:0 0 5px;font-weight:700;font-size:13px;}
+.qbar{height:8px;border-radius:6px;background:#ecdcb8;overflow:hidden;box-shadow:inset 0 1px 3px rgba(120,90,40,.18);}
+.qbar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#a8d885,var(--grass-d));}
+.quest .qn{font-weight:700;font-size:11.5px;color:var(--leaf-d);white-space:nowrap;}
+
+/* 顺水提示（同一片水里，往下游看） */
+.divehint{position:absolute;z-index:6;left:50%;top:650px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:7px 14px;font-weight:700;font-size:13px;color:var(--water-3);background:rgba(255,255,255,.55);border-radius:14px;box-shadow:0 3px 9px rgba(10,55,53,.14);cursor:pointer;}
+.divehint .chev{width:15px;height:15px;opacity:.85;}
+/* ---- 泡泡：任天堂风格，半透明球体，边缘高光 + 内部折射 ---- */
+.wbub,.dbub{position:absolute;z-index:1;border-radius:50%;
+  background:
+    radial-gradient(circle at 32% 28%,rgba(255,255,255,.65) 0%,rgba(255,255,255,.15) 40%,rgba(255,255,255,.02) 70%),
+    radial-gradient(circle at 50% 50%,rgba(255,255,255,.08) 0%,rgba(255,255,255,.25) 60%,rgba(255,255,255,.05) 100%);
+  box-shadow:
+    inset 0 -2px 3px rgba(255,255,255,.08),
+    0 0 4px rgba(255,255,255,.06);
+  pointer-events:none;}
+.wbub.w1{left:20%;top:520px;width:10px;height:10px;animation:rise 5s ease-in infinite;}
+.wbub.w2{left:76%;top:570px;width:8px;height:8px;animation:rise 5s ease-in infinite 1.8s;}
+.wbub.w3{left:52%;top:680px;width:6px;height:6px;opacity:.4;animation:rise 6s ease-in infinite 3s;}
+
+/* ---- 水面波光：阳光在水面线的闪烁，自然而非按钮式 ---- */
+.glint{position:absolute;z-index:1;width:4px;height:4px;border-radius:50%;background:#fff;opacity:0;pointer-events:none;}
+.glint.g1{left:16%;top:346px;animation:glint 5.2s ease-in-out infinite 1.3s;}
+.glint.g2{left:64%;top:352px;width:3px;height:3px;animation:glint 4.4s ease-in-out infinite 3.6s;}
+.glint.g3{left:82%;top:342px;animation:glint 6s ease-in-out infinite .8s;}
+.glint.g4{left:38%;top:356px;width:3px;height:3px;animation:glint 5.8s ease-in-out infinite 5s;}
+
+/* ---- 水下悬浮微粒：极淡的浮尘缓慢漂移，让水体活起来 ---- */
+.spec{position:absolute;z-index:0;border-radius:50%;background:rgba(255,255,255,.15);pointer-events:none;}
+.spec.s1{left:8%;top:200px;width:3px;height:3px;animation:flurry 14s ease-in-out infinite;}
+.spec.s2{left:72%;top:340px;width:2px;height:2px;animation:flurry 18s ease-in-out infinite 5s;}
+.spec.s3{left:36%;top:180px;width:3px;height:3px;animation:flurry 16s ease-in-out infinite 9s;}
+.spec.s4{left:50%;top:400px;width:2px;height:2px;animation:flurry 20s ease-in-out infinite 3s;}
+.spec.s5{left:88%;top:520px;width:3px;height:3px;opacity:.12;animation:flurry 22s ease-in-out infinite 12s;}
+.spec.s6{left:20%;top:600px;width:2px;height:2px;opacity:.1;animation:flurry 17s ease-in-out infinite 7s;}
+
+/* ---- 漂着：同一片水的深处，漂着的东西是奶油泡泡 ---- */
+.under{background:linear-gradient(180deg,#46a39c 0%,#3f9e97 10%,#2b817c 38%,var(--water-3) 66%,var(--water-deep) 100%);}
+/* 极淡水光：让整片水「在流」，而不是死的底色 */
+.under::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(80% 12% at 50% 0%,rgba(255,255,255,.08),transparent 70%),
+            radial-gradient(82% 38% at 28% 12%,rgba(255,255,255,.16),transparent 62%),
+            radial-gradient(64% 32% at 78% 28%,rgba(255,255,255,.10),transparent 60%),
+            radial-gradient(70% 30% at 46% 66%,rgba(255,255,255,.06),transparent 64%);
+  animation:caustic 9s ease-in-out infinite;}
+/* 顶部一行：返回河湾 + 漂着标牌（与水面那条「顺水看看」上下对称） */
+.under-head{position:absolute;left:0;right:0;top:64px;z-index:8;display:flex;align-items:center;justify-content:center;gap:10px;}
+.under-tag{padding:6px 12px;font-weight:700;font-size:12px;color:rgba(246,253,250,.94);text-shadow:0 1px 3px rgba(0,45,43,.55);}
+.uphint{display:inline-flex;align-items:center;gap:6px;border:0;cursor:pointer;
+  padding:6px 10px;font-weight:700;font-size:13px;color:rgba(246,253,250,.94);text-shadow:0 1px 3px rgba(0,45,43,.55);}
+.uphint .chevup{width:15px;height:15px;opacity:.9;}
+.upbar{position:absolute;left:0;right:0;top:0;height:42px;z-index:9;}
+
+.dbub.d1{left:18%;top:160px;width:10px;height:10px;animation:rise 6s ease-in infinite;}
+.dbub.d2{left:84%;top:320px;width:8px;height:8px;animation:rise 6s ease-in infinite 1.6s;}
+.dbub.d3{left:30%;top:470px;width:12px;height:12px;animation:rise 6s ease-in infinite 3.1s;}
+.dbub.d4{left:62%;top:240px;width:6px;height:6px;opacity:.7;animation:rise 4.4s ease-in infinite .8s;}
+.dbub.d5{left:44%;top:560px;width:9px;height:9px;animation:rise 7.6s ease-in infinite 2.4s;}
+
+/* ---- 光柱：贯穿「同一片水」的连续光束。直接挂在 worldtrack 上(随水体一起滚动)，
+   从水面线一路延伸到接近河床，单条渐变 → 水面/水下接缝处完全无感 ---- */
+.ray{position:absolute;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,
+    transparent 0%, rgba(255,255,255,.15) 6%, rgba(255,255,255,.21) 16%,
+    rgba(255,255,255,.16) 33%, rgba(255,255,255,.115) 50%,
+    rgba(255,255,255,.075) 66%, rgba(255,255,255,.04) 82%, transparent 96%);
+  filter:blur(12px);mix-blend-mode:screen;transform-origin:top center;}
+.ray.r1{left:44px;top:284px;width:60px;height:1090px;transform:rotate(3deg);animation:ray 12s ease-in-out infinite;}
+.ray.r2{left:176px;top:298px;width:42px;height:1050px;transform:rotate(-2.5deg);animation:ray 14s ease-in-out infinite 2.6s;}
+.ray.r3{right:50px;top:290px;width:52px;height:1068px;transform:rotate(4deg);animation:ray 13s ease-in-out infinite 4.8s;}
+.riverbed{position:absolute;left:0;right:0;bottom:0;height:82px;z-index:1;
+  background:linear-gradient(180deg,#869a66 0%,#6b8157 58%,#5a7050 100%);
+  box-shadow:0 -8px 22px rgba(10,55,53,.20);}
+.riverbed::before{content:"";position:absolute;left:0;right:0;top:-12px;height:24px;
+  background:radial-gradient(58% 100% at 26% 100%,#94a874,transparent 72%),
+            radial-gradient(64% 100% at 68% 100%,#8a9e6a,transparent 74%),
+            radial-gradient(50% 100% at 92% 100%,#8fa46f,transparent 76%);}
+.weed{position:absolute;z-index:1;bottom:60px;width:10px;border-radius:50% 50% 48% 52%/64% 64% 36% 36%;
+  background:linear-gradient(180deg,#63a47d,#3c7a59);transform-origin:bottom center;}
+.weed.wd1{left:30px;height:78px;animation:sway 5s ease-in-out infinite;}
+.weed.wd2{left:44px;height:56px;width:8px;animation:sway 5s ease-in-out infinite .7s;}
+.weed.wd3{right:34px;height:70px;animation:sway 6s ease-in-out infinite .3s;}
+.weed.wd4{right:48px;height:50px;width:8px;animation:sway 6s ease-in-out infinite 1s;}
+.peb{position:absolute;z-index:2;border-radius:52% 48% 50% 50%/62% 62% 38% 38%;
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.32),0 3px 6px rgba(10,55,53,.28);}
+.peb.p1{bottom:46px;left:38px;width:36px;height:25px;background:radial-gradient(circle at 38% 30%,#a3aea6,#717f77);}
+.peb.p2{bottom:34px;left:84px;width:22px;height:16px;background:radial-gradient(circle at 38% 30%,#c6b487,#917f54);}
+.peb.p3{bottom:50px;right:58px;width:40px;height:27px;background:radial-gradient(circle at 36% 28%,#eccd6c,#bf983a);}
+.peb.p4{bottom:30px;right:30px;width:20px;height:14px;background:radial-gradient(circle at 38% 30%,#a3aea6,#73817a);}
+.fish{position:absolute;z-index:2;width:16px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 36% 34%,#f1c26d,#d8923a);}
+.fish::before{content:"";position:absolute;left:-5px;top:1.5px;width:0;height:0;border:4px solid transparent;border-right-color:#d8923a;}
+.fish::after{content:"";position:absolute;right:3px;top:2.5px;width:2px;height:2px;border-radius:50%;background:#3a2c1a;}
+.fish.f1{top:250px;left:44px;animation:swimf 16s ease-in-out infinite;}
+.fish.f2{top:432px;right:60px;animation:swimf 19s ease-in-out infinite 3s;}
+
+/* ============ 漂着页：奶油泡泡（投递 → 生成问卷 → 可作答 → 搁浅可决定） ============ */
+/* 泡泡池：数量越多泡泡越小（有下限 100px），轻轻上下漂浮 */
+.pool{position:absolute;z-index:3;left:14px;right:14px;top:98px;display:flex;flex-wrap:wrap;
+  justify-content:center;align-items:flex-start;gap:14px 16px;}
+.bub{position:relative;width:var(--sz,144px);height:var(--sz,144px);flex:none;
+  animation:bubdrift 6s ease-in-out infinite;}
+.bub:nth-child(even){margin-top:30px;}
+.bub:nth-child(3n){animation-duration:7.2s;animation-delay:-2.3s;}
+.bub:nth-child(3n+2){animation-delay:-1.1s;}
+.bub-clip{position:absolute;inset:0;overflow:hidden;
+  border-radius:49% 51% 52% 48%/53% 52% 48% 47%;
+  border:1.5px solid rgba(255,255,255,.5);
+  box-shadow:0 12px 22px rgba(10,55,53,.20),0 3px 7px rgba(10,55,53,.12),
+    inset 0 4px 6px rgba(255,255,255,.85),inset 0 -10px 18px rgba(150,108,48,.10);
+  background:radial-gradient(120% 108% at 38% 26%,#fffdf7 0%,var(--paper) 46%,#f3e7cf 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:8px 12px;transition:transform .12s;}
+.b-in{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:3px;width:100%;}
+.b-title{font-weight:700;font-size:12.5px;color:var(--ink);line-height:1.22;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.b-sub{font-size:10.5px;color:var(--muted);}
+.b-tag{margin-top:3px;font-size:9.5px;font-weight:700;border-radius:8px;padding:2px 7px;}
+/* 生成中：半透明壳 + 从底部往上充满的奶油"水"（像往杯子里加水），不可点 */
+.bub.gen .bub-clip{background:rgba(255,250,239,.16);border-color:rgba(255,255,255,.3);
+  box-shadow:0 8px 16px rgba(10,55,53,.12),inset 0 0 0 1px rgba(255,255,255,.16);}
+.b-fill{position:absolute;left:0;right:0;bottom:0;height:0;z-index:0;
+  background:radial-gradient(120% 160% at 40% 30%,#fffdf7,var(--paper) 60%,#f3e7cf);transition:height .25s linear;}
+.b-fill::before{content:"";position:absolute;left:-12%;right:-12%;top:-5px;height:9px;border-radius:50%;background:rgba(255,255,255,.55);}
+.bub.gen .b-title{color:var(--ink-2);}
+.b-gen{font-size:10px;color:var(--water-3);font-weight:700;display:flex;align-items:center;gap:5px;}
+.b-gen i{width:5px;height:5px;border-radius:50%;background:var(--water-2);animation:genblink 1s ease-in-out infinite;}
+.b-pct{font-size:9.5px;color:var(--ink-2);font-weight:700;}
+/* 可作答：实心 + 可点 + 轻脉动 + 绿色小标 */
+.bub.ready{cursor:pointer;animation:bubdrift 6s ease-in-out infinite,readypulse 2.6s ease-in-out infinite;}
+.bub.ready .b-tag{color:var(--leaf-d);background:rgba(124,184,106,.2);}
+.bub.ready:active .bub-clip{transform:scale(.96);}
+/* 搁浅·可决定：黄色光圈 */
+.bub.beached{cursor:pointer;animation:bubdrift 6s ease-in-out infinite,beachglow 2.2s ease-in-out infinite;}
+.bub.beached .bub-clip{box-shadow:0 0 0 3px rgba(247,201,72,.9),0 0 14px 3px rgba(247,201,72,.45),
+  0 10px 20px rgba(10,55,53,.18),inset 0 4px 6px rgba(255,255,255,.85),inset 0 -10px 18px rgba(150,108,48,.1);}
+.bub.beached .b-tag{color:#a9760c;background:rgba(247,201,72,.25);}
+.bub.beached:active .bub-clip{transform:scale(.96);}
+/* 问卷面板：泡泡放大成圆角小页面，水豚从顶上探出头 */
+.qpanel{position:absolute;inset:0;z-index:52;display:none;place-items:center;background:rgba(18,58,56,.42);backdrop-filter:blur(3px);padding:20px;}
+.qpanel.show{display:grid;animation:fade .3s ease;}
+.qcard{position:relative;width:300px;max-width:86vw;margin-top:50px;padding:30px 22px 22px;border-radius:30px;
+  background:radial-gradient(140% 120% at 50% 0%,#fffdf7,var(--paper) 56%,#f3e7cf);
+  box-shadow:0 24px 50px rgba(0,0,0,.3),inset 0 3px 0 rgba(255,255,255,.7);
+  animation:bubgrow .45s cubic-bezier(.34,1.4,.5,1);text-align:center;}
+.qhead{position:absolute;top:-74px;left:50%;width:124px;height:auto;transform:translateX(-50%);
+  filter:drop-shadow(0 7px 8px rgba(10,55,53,.22));pointer-events:none;animation:headpop .5s cubic-bezier(.34,1.5,.5,1);}
+.qprog{display:flex;justify-content:center;gap:6px;margin:2px 0 14px;}
+.qprog i{width:7px;height:7px;border-radius:50%;background:#e7d9be;transition:background .2s;}
+.qprog i.on{background:var(--water-2);}
+.qq{font-weight:700;font-size:15px;color:var(--ink);line-height:1.5;margin:0 2px 16px;min-height:44px;}
+.qopts{display:flex;flex-direction:column;gap:9px;}
+.qopt{border:0;border-radius:14px;padding:12px 14px;font-weight:700;font-size:13px;cursor:pointer;
+  background:var(--cream);color:var(--ink-2);box-shadow:inset 0 0 0 1.5px var(--line-2);transition:transform .12s,background .15s;}
+.qopt:active{transform:scale(.97);}
+.qres-tag{font-weight:700;font-size:11px;letter-spacing:.1em;color:var(--muted);margin:2px 0 6px;}
+.qres-h{font-weight:700;font-size:21px;margin:0 0 8px;}
+.qres-p{font-size:12.5px;color:var(--ink-2);line-height:1.7;margin:0 6px 18px;}
+.qrow{display:flex;gap:9px;}
+.qrow .btn-ok,.qrow .btn-ghost{flex:1;}
+.btn-ghost{border:0;border-radius:16px;padding:12px 0;font-weight:700;font-size:14px;cursor:pointer;
+  background:var(--cream-2);color:var(--ink-2);box-shadow:0 4px 0 var(--line-2);transition:transform .12s,box-shadow .12s;}
+.btn-ghost:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line-2);}
+.acts{display:flex;gap:8px;margin-top:14px;}
+.act{border:0;border-radius:11px;padding:7px 12px;font-weight:700;font-size:11px;cursor:pointer;transition:transform .12s,box-shadow .12s;}
+.act:active{transform:translateY(3px);}
+.act.keep{background:var(--cream-2);color:var(--ink-2);box-shadow:0 4px 0 var(--line-2);}
+.act.let{background:var(--grass-d);color:#fff;box-shadow:0 4px 0 var(--leaf-d);}
+
+/* ============ 小院 / 我（覆盖层） ============ */
+.overlay{position:absolute;z-index:6;inset:0 0 92px;overflow-y:auto;scrollbar-width:none;display:none;}
+.overlay::-webkit-scrollbar{display:none;}
+.overlay.on{display:block;animation:pop .45s cubic-bezier(.34,1.3,.5,1);}
+.pad{padding:0 20px 30px;}
+.safe{padding-top:70px;}
+.yard-view,.me-view{background:linear-gradient(180deg,#dff1ec,var(--cream) 34%);}
+.yard-head{display:flex;align-items:center;justify-content:space-between;margin:0 2px 22px;}
+.yard-head h1{margin:0;font-size:25px;font-weight:700;letter-spacing:.02em;color:var(--ink);}
+.coinchip{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13px;color:var(--wood-dd);}
+.coinchip svg{width:26px;height:26px;flex:none;filter:drop-shadow(0 3px 4px rgba(224,154,28,.35));}
+.coinchip b{font-size:17px;color:var(--ink);}
+.subhead{display:flex;align-items:center;gap:9px;margin:0 2px 14px;font-weight:700;font-size:15px;color:var(--ink);}
+.subhead small{font-weight:400;font-size:11px;color:var(--muted);margin-left:auto;}
+.dex{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:30px;}
+.cell{padding:17px 6px 13px;border-radius:18px;text-align:center;background:var(--paper);box-shadow:var(--clay),inset 0 2px 0 rgba(255,255,255,.6);}
+.cell svg{width:50px;height:50px;display:block;margin:0 auto;}
+.cell span{display:block;font-size:11.5px;color:var(--ink-2);margin-top:9px;font-weight:500;}
+.cell.locked{background:#f1e7d2;box-shadow:inset 0 2px 6px rgba(120,90,40,.12);}
+.cell.locked .q{width:50px;height:50px;margin:0 auto;border-radius:50%;background:#e3d6ba;display:grid;place-items:center;font-weight:700;font-size:21px;color:#b7a585;box-shadow:inset 0 2px 5px rgba(120,90,40,.15);}
+.cell.locked span{color:var(--muted);}
+.shopitem{display:flex;align-items:center;gap:14px;padding:12px 15px;border-radius:18px;margin-bottom:12px;background:var(--paper);box-shadow:var(--clay),inset 0 2px 0 rgba(255,255,255,.6);}
+.shopitem svg{width:44px;height:44px;flex:none;}
+.shopitem .sm{flex:1;}
+.shopitem .sm h4{margin:0 0 3px;font-weight:700;font-size:14px;}
+.shopitem .sm p{margin:0;font-size:11px;color:var(--muted);}
+.btn-buy{border:0;border-radius:14px;background:var(--yuzu);color:#7a5410;font-weight:700;font-size:13px;padding:9px 15px;cursor:pointer;box-shadow:0 4px 0 #c8861a;transition:transform .12s,box-shadow .12s;}
+.btn-buy:active{transform:translateY(2px);box-shadow:0 2px 0 #c8861a;}
+.mecard{display:flex;align-items:center;gap:14px;margin:0 0 16px;padding:17px;border-radius:22px;background:var(--paper);box-shadow:var(--clay),inset 0 2px 0 rgba(255,255,255,.6);}
+.meav{width:62px;height:62px;flex:none;border-radius:20px;background:radial-gradient(circle at 40% 32%,var(--fur-l),var(--fur) 64%,var(--fur-d));position:relative;box-shadow:inset -3px -4px 6px rgba(150,118,78,.4);}
+.meav::before{content:"";position:absolute;left:18px;top:26px;width:9px;height:9px;border-radius:50%;background:#4a3a26;box-shadow:18px 0 0 #4a3a26;}
+.meav::after{content:"";position:absolute;left:50%;top:48px;transform:translateX(-50%);width:14px;height:7px;border:2px solid #43341f;border-top:0;border-radius:0 0 14px 14px;}
+.mecard h3{margin:0 0 4px;font-weight:700;font-size:19px;}
+.mecard p{margin:0;font-size:12px;color:var(--ink-2);}
+.stat2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:0 0 16px;}
+.statbox{padding:16px;border-radius:18px;text-align:center;background:var(--paper);box-shadow:var(--clay),inset 0 2px 0 rgba(255,255,255,.6);}
+.statbox b{display:block;font-weight:700;font-size:23px;color:var(--water-2);}
+.statbox small{font-size:11px;color:var(--muted);}
+.melist{display:grid;gap:11px;}
+.mr{display:flex;justify-content:space-between;align-items:center;padding:16px;border-radius:16px;font-size:14px;font-weight:500;cursor:pointer;background:linear-gradient(180deg,var(--paper),#fbf1da);box-shadow:var(--clay),inset 0 2px 0 rgba(255,255,255,.6);border-left:4px solid var(--wood);}
+.mr span{color:var(--muted);font-size:12px;}
+
+/* ============ 导航 ============ */
+.nav{position:absolute;z-index:12;left:0;right:0;bottom:0;height:92px;display:grid;grid-template-columns:repeat(4,1fr);padding:9px 10px 22px;background:var(--paper);border-top:1.5px solid var(--line-2);box-shadow:0 -6px 16px rgba(120,90,40,.08);}
+.nav button{border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);font-weight:700;font-size:11px;transition:color .2s;}
+.nav button svg{width:25px;height:25px;transition:transform .2s;}
+.nav button.active{color:var(--water-2);}
+.nav button.active svg{transform:translateY(-2px);}
+.home-bar{position:absolute;z-index:14;bottom:8px;left:50%;transform:translateX(-50%);width:128px;height:5px;border-radius:3px;background:rgba(60,45,20,.28);}
+
+.toast{position:absolute;z-index:48;left:32px;right:32px;top:100px;display:none;text-align:center;padding:13px 16px;border-radius:18px;background:var(--paper);color:var(--ink);font-weight:600;font-size:13.5px;box-shadow:0 12px 30px rgba(120,90,40,.25);}
+.toast.show{display:block;animation:pop .4s cubic-bezier(.34,1.3,.5,1);}
+
+.reward{position:absolute;inset:0;z-index:50;display:none;place-items:center;background:rgba(45,36,24,.42);backdrop-filter:blur(3px);}
+.reward.show{display:grid;animation:fade .3s ease;}
+.reward .rc{width:264px;padding:26px 22px;border-radius:28px;text-align:center;background:var(--paper);box-shadow:0 20px 50px rgba(0,0,0,.3);animation:pop .5s cubic-bezier(.34,1.5,.5,1);}
+.rbag{width:74px;height:64px;margin:0 auto;position:relative;border-radius:14px 14px 18px 18px;background:linear-gradient(180deg,var(--wood-l),var(--wood));box-shadow:inset 0 -4px 0 rgba(0,0,0,.12);animation:wob 1.2s ease-in-out infinite;}
+.rbag::before{content:"";position:absolute;left:50%;top:-8px;transform:translateX(-50%);width:30px;height:14px;border:3px solid var(--leaf-d);border-bottom:0;border-radius:18px 18px 0 0;}
+.rbag::after{content:"";position:absolute;left:50%;top:24px;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#ffe79a,var(--yuzu-d));}
+.reward h3{margin:16px 0 6px;font-weight:700;font-size:18px;}
+.reward p{margin:0 0 18px;font-size:12.5px;color:var(--ink-2);line-height:1.8;}
+.rg{display:flex;justify-content:center;gap:22px;margin-bottom:18px;}
+.rg div{font-weight:700;font-size:13px;color:var(--ink-2);}
+.rg div em{display:block;font-weight:700;font-size:24px;font-style:normal;color:var(--leaf-d);}
+.btn-ok{width:100%;border:0;border-radius:16px;padding:12px 0;font-weight:700;font-size:14px;color:#fff;cursor:pointer;background:var(--grass-d);box-shadow:0 5px 0 var(--leaf-d);transition:transform .12s,box-shadow .12s;}
+.btn-ok:active{transform:translateY(3px);box-shadow:0 2px 0 var(--leaf-d);}
+.btn-ok.alt{background:var(--water-2);box-shadow:0 5px 0 var(--water-3);}
+.peek{position:absolute;inset:0;z-index:50;display:none;place-items:center;background:rgba(45,36,24,.42);backdrop-filter:blur(3px);}
+.peek.show{display:grid;animation:fade .3s ease;}
+.peek .pc{width:250px;padding:22px;border-radius:26px;text-align:center;background:var(--paper);box-shadow:0 20px 50px rgba(0,0,0,.3);animation:pop .5s cubic-bezier(.34,1.5,.5,1);}
+.peek .pic{width:96px;height:96px;margin:2px auto;border-radius:24px;display:grid;place-items:center;background:radial-gradient(circle at 40% 32%,#fff,#f3e7cf);box-shadow:inset 0 2px 0 rgba(255,255,255,.7),var(--clay);}
+.peek .pic svg{width:74px;height:74px;}
+.peek .tag2{margin-top:8px;font-weight:700;font-size:11px;color:var(--leaf-d);letter-spacing:.04em;}
+.peek h3{margin:6px 0 0;font-weight:700;font-size:19px;color:var(--ink);}
+.peek p{margin:8px 6px 18px;font-size:12.5px;color:var(--ink-2);line-height:1.7;}
+
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes fade{from{opacity:0;}to{opacity:1;}}
+@keyframes breathe{0%,100%{transform:translateX(-50%) scale(1);}50%{transform:translateX(-50%) scale(1.014);}}
+@keyframes sunpulse{0%,100%{box-shadow:0 0 0 11px rgba(255,236,150,.3),0 0 38px rgba(255,220,120,.55);}50%{box-shadow:0 0 0 15px rgba(255,236,150,.22),0 0 48px rgba(255,220,120,.65);}}
+@keyframes drift{from{transform:translateX(0);}to{transform:translateX(44px);}}
+@keyframes steam{0%{opacity:0;transform:translateY(0) scaleX(1);}30%{opacity:.6;}100%{opacity:0;transform:translateY(-46px) scaleX(1.6);}}
+@keyframes floatx{0%,100%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-5px) rotate(4deg);}}
+@keyframes floaty{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-7px);}}
+@keyframes driftHot{0%,100%{transform:translateY(0) rotate(-2.6deg);}50%{transform:translateY(-11px) rotate(-1deg);}}
+@keyframes driftWarm{0%,100%{transform:translateY(3px) rotate(2.4deg);}50%{transform:translateY(-4px) rotate(3.4deg);}}
+@keyframes driftCool{0%,100%{transform:translateY(0) rotate(-1.4deg);}50%{transform:translateY(-3px) rotate(-.3deg);}}
+@keyframes caustic{0%,100%{opacity:.55;transform:translateY(0);}50%{opacity:1;transform:translateY(7px);}}
+@keyframes sway{0%,100%{transform:rotate(-8deg);}50%{transform:rotate(8deg);}}
+@keyframes ray{0%,100%{opacity:.4;}50%{opacity:.85;}}
+@keyframes swimf{0%,100%{transform:translate(0,0);}25%{transform:translate(28px,-9px);}50%{transform:translate(50px,3px);}75%{transform:translate(24px,11px);}}
+@keyframes rise{0%{opacity:0;transform:translateY(0) scale(.6);}30%{opacity:.7;}100%{opacity:0;transform:translateY(-40px) scale(1);}}
+@keyframes nudge{0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}}
+@keyframes nudgeup{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+@keyframes wob{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
+@keyframes glint{0%,100%{opacity:0;transform:scale(.3);}20%{opacity:.8;transform:scale(1.1);}40%{opacity:0;transform:scale(.5);}}
+@keyframes flurry{0%{transform:translate(0,0) scale(1);opacity:0;}15%{opacity:.3;}70%{opacity:.2;}100%{transform:translate(-18px,38px) scale(.6);opacity:0;}}
+@keyframes bubdrift{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+@keyframes genblink{0%,100%{opacity:.25;}50%{opacity:1;}}
+@keyframes readypulse{0%,100%{filter:none;}50%{filter:drop-shadow(0 0 7px rgba(124,184,106,.55));}}
+@keyframes beachglow{0%,100%{filter:drop-shadow(0 0 2px rgba(247,201,72,.35));}50%{filter:drop-shadow(0 0 9px rgba(247,201,72,.7));}}
+@keyframes bubgrow{from{opacity:0;transform:scale(.3) translateY(22px);}to{opacity:1;transform:scale(1) translateY(0);}}
+@keyframes headpop{from{opacity:0;transform:translateX(-50%) translateY(16px) scale(.7);}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}}
+
+/* ============================================================
+   ↓↓↓ 接入真实后端：扑通过渡动画 / 聊天问卷 / 报告卡 / 沉淀池下沉 ↓↓↓
+   ============================================================ */
+
+/* ---- 扑通过渡：许愿瓶 → 开盖 → 羊皮纸 → 豚豚读 ---- */
+.bottle-stage{display:none;}
+.bottle-stage.run{display:block;}
+.bottle{position:absolute;left:44%;top:300px;width:32px;height:56px;z-index:9;transform-origin:50% 100%;}
+.bottle .glass{position:absolute;inset:11px 0 0;border-radius:11px 11px 13px 13px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(185,228,224,.9),rgba(120,195,190,.82));
+  border:1.5px solid rgba(255,255,255,.75);box-shadow:inset 0 4px 6px rgba(255,255,255,.55),0 4px 9px rgba(10,55,53,.18);}
+.bottle .glass .scroll{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);width:15px;height:17px;
+  border-radius:3px;background:linear-gradient(#fff7e6,#ead9b4);box-shadow:inset 0 0 0 1px #d9c498;}
+.bottle .cap{position:absolute;left:50%;top:1px;transform:translateX(-50%);width:14px;height:12px;
+  border-radius:4px 4px 3px 3px;background:linear-gradient(#caa06a,#a87b46);box-shadow:inset 0 1px 0 rgba(255,255,255,.4);}
+.bottle-stage.run .bottle{animation:bottleFly 1.2s cubic-bezier(.45,.05,.25,1) forwards;}
+.bottle-stage.run .cap{animation:capPop .45s ease 1.0s forwards;}
+.parchment{position:absolute;left:55%;top:198px;width:50px;height:38px;z-index:8;opacity:0;transform-origin:left center;
+  border-radius:5px;background:linear-gradient(180deg,#fff7e6,#f0e0bd);
+  box-shadow:0 6px 13px rgba(120,90,40,.22),inset 0 0 0 1px #e6d2a6;}
+.parchment i{position:absolute;left:8px;right:8px;height:3px;border-radius:2px;background:#d8c39a;}
+.parchment i:nth-child(1){top:9px;} .parchment i:nth-child(2){top:17px;right:16px;} .parchment i:nth-child(3){top:25px;}
+.bottle-stage.run .parchment{animation:scrollUnfold .6s cubic-bezier(.34,1.4,.5,1) 1.3s forwards;}
+.capy.reading{animation:breathe 5.5s ease-in-out infinite, readbob 2.2s ease-in-out 1.5s infinite;}
+@keyframes bottleFly{
+  0%{transform:translateY(40px) rotate(-22deg) scale(.55);opacity:0;}
+  22%{opacity:1;}
+  60%{transform:translateY(-152px) rotate(10deg) scale(1.05);}
+  80%{transform:translateY(-120px) rotate(-4deg) scale(1);}
+  100%{transform:translateY(-126px) rotate(0) scale(1);}
+}
+@keyframes capPop{0%{transform:translateX(-50%) translateY(0) rotate(0);opacity:1;}100%{transform:translateX(-50%) translateY(-18px) rotate(42deg);opacity:0;}}
+@keyframes scrollUnfold{0%{opacity:0;transform:scaleX(.1) scaleY(.7);}60%{opacity:1;transform:scaleX(1.05) scaleY(1);}100%{opacity:1;transform:scaleX(1) scaleY(1);}}
+@keyframes readbob{0%,100%{transform:translateX(-50%) scale(1) rotate(0);}50%{transform:translateX(-50%) scale(1.012) rotate(-1.6deg);}}
+
+/* ---- 聊天问卷 ---- */
+.qcard.chat{width:332px;max-width:92vw;height:580px;display:flex;flex-direction:column;padding:46px 14px 14px;}
+.qcard.chat .qprog{flex:none;margin:0 0 10px;}
+.qchat{flex:1 1 auto;min-height:0;overflow-y:auto;display:block;
+  padding:4px 4px 2px;text-align:left;scrollbar-width:thin;}
+.qchat::-webkit-scrollbar{width:5px;} .qchat::-webkit-scrollbar-thumb{background:#e3d4b4;border-radius:3px;}
+.chat-msg{display:block;max-width:86%;width:fit-content;margin:0 0 9px;padding:9px 12px;border-radius:15px;font-size:13px;line-height:1.55;overflow-wrap:break-word;animation:msgin .28s ease;}
+.chat-msg:last-child{margin-bottom:0;}
+.chat-msg.chat-capy{background:var(--cream);color:var(--ink);border-bottom-left-radius:5px;box-shadow:inset 0 0 0 1.5px var(--line-2);}
+.chat-msg.chat-user{margin-left:auto;background:var(--water-2);color:#fff;border-bottom-right-radius:5px;box-shadow:0 3px 8px rgba(47,125,121,.25);}
+.chat-sub{display:block;margin-top:5px;font-size:11px;color:var(--muted);line-height:1.45;}
+.chat-msg.chat-user .chat-sub{color:rgba(255,255,255,.82);}
+.chat-typing{display:inline-flex;gap:4px;align-items:center;}
+.chat-typing i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:genblink 1s ease-in-out infinite;}
+.chat-typing i:nth-child(2){animation-delay:.2s;} .chat-typing i:nth-child(3){animation-delay:.4s;}
+@keyframes msgin{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.qinput{flex:none;padding-top:10px;display:flex;flex-direction:column;gap:9px;}
+.qinput:empty{display:none;}
+.qinput .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.qchip{border:0;border-radius:13px;padding:10px 14px;font-weight:700;font-size:13px;cursor:pointer;max-width:100%;line-height:1.4;
+  background:var(--cream);color:var(--ink-2);box-shadow:inset 0 0 0 1.5px var(--line-2);transition:transform .12s,background .15s,color .15s;}
+.qchip:active{transform:scale(.96);}
+.qchip.on{background:var(--water-2);color:#fff;box-shadow:none;}
+.qtext{width:100%;border:0;border-radius:13px;padding:11px 13px;font-size:13px;color:var(--ink);background:var(--cream);
+  box-shadow:inset 0 0 0 1.5px var(--line-2);outline:none;font-family:"PingFang SC","SF Pro",sans-serif;}
+.qslider{display:flex;flex-direction:column;gap:6px;padding:2px 4px;}
+.qslider input[type=range]{width:100%;accent-color:var(--water-2);}
+.qslider .sv{text-align:center;font-weight:700;font-size:14px;color:var(--water-3);}
+.qslider .sl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
+.qsend{border:0;border-radius:14px;padding:11px 0;font-weight:700;font-size:14px;color:#fff;cursor:pointer;
+  background:var(--water-2);box-shadow:0 4px 0 var(--water-3);transition:transform .12s,box-shadow .12s;}
+.qsend:active{transform:translateY(3px);box-shadow:0 1px 0 var(--water-3);}
+
+/* ---- 报告卡（聊天里的一段豚豚消息）---- */
+.report-msg{width:auto;max-width:100%;background:var(--paper);box-shadow:var(--clay),inset 0 0 0 1.5px var(--line);}
+.report-card .rc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.lean-badge{display:inline-block;padding:4px 11px;border-radius:999px;font-size:12px;font-weight:700;color:#fff;}
+.lean-badge.buy{background:var(--leaf-d);} .lean-badge.keep_floating{background:var(--water-2);} .lean-badge.let_go{background:var(--blush);}
+.rc-conf{font-size:11px;color:var(--muted);font-weight:700;}
+.rc-row{font-size:12.5px;color:var(--ink);line-height:1.6;margin-top:8px;}
+.rc-row b{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:1px;}
+.rc-row.sug{color:var(--water-3);}
+.report-acts{display:flex;gap:8px;}
+.ract{flex:1;border:0;border-radius:13px;padding:11px 4px;font-weight:700;font-size:12.5px;cursor:pointer;
+  background:var(--cream-2);color:var(--ink-2);box-shadow:0 4px 0 var(--line-2);transition:transform .12s,box-shadow .12s;}
+.ract:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line-2);}
+.ract.buy{background:var(--grass-d);color:#fff;box-shadow:0 4px 0 var(--leaf-d);}
+.ract.let_go{background:var(--blush);color:#fff;box-shadow:0 4px 0 #d07a5e;}
+.ract.hl{outline:2.5px solid var(--yuzu);outline-offset:1px;}
+
+/* ---- 沉淀池：按真实时间下沉（24h 沉底），绝对定位 ---- */
+.pool{display:block;position:absolute;left:12px;right:12px;top:96px;height:560px;}
+.bub.float{position:absolute;margin:0!important;width:116px;height:116px;
+  transition:top 1.4s cubic-bezier(.4,0,.3,1),left .8s ease;}
+.bub.float .b-tag{color:var(--water-3);background:rgba(79,176,168,.18);}
+.bub.float.sunk{filter:saturate(.9) brightness(.96);}
+.bub.float.sunk .b-tag{color:#7a6a4a;background:rgba(150,130,90,.2);}
+.pool-empty{position:absolute;left:0;right:0;top:38%;text-align:center;padding:0 36px;
+  font-size:13px;font-weight:600;line-height:1.7;color:rgba(246,253,250,.85);text-shadow:0 1px 4px rgba(0,45,43,.5);}
+
+@media (max-width:430px){
+  body{padding:0;}.stage-cap{display:none;}
+  .device{width:100vw;height:100vh;border-radius:0;border-width:0;}.device::before{top:0;}.screen{border-radius:0;}
+}

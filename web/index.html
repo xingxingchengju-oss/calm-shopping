@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>豚豚的河湾村 · 水豚陪伴 v4 · 问卷泡泡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fontsapi.zeoseven.com" crossorigin>
+<!-- 圆体中文：Zen Maru Gothic（禅圆体），字形圆润可爱 -->
+<link rel="stylesheet" href="https://fontsapi.zeoseven.com/181/main/result.css">
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<div class="stage">
+  <div class="stage-cap">水豚陪伴 · 晴日河湾村</div>
+  <div class="device">
+    <div class="screen">
+      <div class="statusbar"><span>09:24</span><span>5G ▰</span></div>
+
+      <div class="world" id="world">
+        <div class="worldtrack" id="track">
+
+          <!-- 贯穿整片水的连续光柱：直接挂在 track 上，从水面一路照到水下河床（接缝无感） -->
+          <div class="ray r1"></div><div class="ray r2"></div><div class="ray r3"></div>
+
+          <!-- 河湾村（水面） -->
+          <section class="surface">
+            <div class="home-top">
+              <h1>河湾村</h1>
+              <div class="streak" title="连续安稳夜">
+                <div class="yz"><i></i><i></i><i></i><i></i><i class="off"></i></div>
+                <b>4 夜安稳</b>
+              </div>
+            </div>
+            <div class="scene">
+            <div class="sky-amb">
+              <div class="sun"></div>
+              <div class="cloud c1"></div><div class="cloud c2"></div>
+              <div class="hill"></div><div class="hill r"></div>
+              <div class="tree t1"><b></b><i></i></div><div class="tree t2"><b></b><i></i></div>
+            </div>
+            <div class="yuzuf y1"></div><div class="yuzuf y2"></div>
+            <svg class="bank" viewBox="0 0 372 124" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="bankGrass" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#a6d57c" stop-opacity="0"/>
+                  <stop offset="18%" stop-color="#9fcf75" stop-opacity="1"/>
+                  <stop offset="70%" stop-color="#8ec566" stop-opacity="1"/>
+                  <stop offset="100%" stop-color="#7eba5b" stop-opacity="1"/>
+                </linearGradient>
+                <filter id="bankBlur" x="-20%" y="-40%" width="140%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+              </defs>
+              <!-- 一整片草滩：上沿渐隐接住画面里的草地，下沿是有机的水岸线（连到画面两侧，不是孤立的台子） -->
+              <path d="M0,0 L372,0 L372,72 C350,77 330,80 300,79 C272,78 256,71 226,73 C200,75 182,86 150,85 C120,84 100,74 70,76 C46,78 22,77 0,73 Z" fill="url(#bankGrass)"/>
+              <!-- 草地深浅斑块（质感） -->
+              <g fill="#7ab958" opacity=".26">
+                <ellipse cx="92" cy="44" rx="44" ry="10"/><ellipse cx="262" cy="40" rx="50" ry="11"/><ellipse cx="176" cy="58" rx="34" ry="8"/>
+              </g>
+              <!-- 水豚压在草上的柔和投影 -->
+              <ellipse cx="186" cy="46" rx="116" ry="12" fill="#3f7a4f" opacity=".15" filter="url(#bankBlur)"/>
+              <!-- 沿岸线的湿润高光（贴着曲线，不是直边沙台） -->
+              <path d="M0,73 C22,77 46,78 70,76 C100,74 120,84 150,85 C182,86 200,75 226,73 C256,71 272,78 300,79 C330,80 350,77 372,72" stroke="#d8ecaf" stroke-width="3.5" fill="none" opacity=".5" stroke-linecap="round"/>
+              <path d="M6,76 C44,80 92,85 150,86 C214,87 282,81 366,75" stroke="#eee9c6" stroke-width="2" fill="none" opacity=".38" stroke-linecap="round"/>
+              <!-- 岸边零散草丛 -->
+              <g fill="none" stroke="#5da34a" stroke-width="2" stroke-linecap="round">
+                <path d="M46,76 c-1,-8 -3,-10 -4,-13 M46,76 c0,-9 0,-12 0,-15 M46,76 c1,-8 3,-10 4,-13"/>
+                <path d="M112,83 c-1,-8 -3,-10 -4,-13 M112,83 c0,-9 0,-12 0,-15 M112,83 c1,-8 3,-10 4,-13"/>
+                <path d="M198,75 c-1,-8 -3,-10 -4,-13 M198,75 c0,-9 0,-12 0,-15 M198,75 c1,-8 3,-10 4,-13"/>
+                <path d="M268,78 c-1,-8 -3,-10 -4,-13 M268,78 c0,-9 0,-12 0,-15 M268,78 c1,-8 3,-10 4,-13"/>
+                <path d="M328,76 c-1,-7 -3,-9 -4,-12 M328,76 c0,-8 0,-11 0,-14 M328,76 c1,-7 3,-9 4,-12"/>
+              </g>
+              <!-- 卵石 -->
+              <ellipse cx="150" cy="92" rx="8" ry="4" fill="#bcb09a"/><ellipse cx="147.5" cy="90.8" rx="3.5" ry="1.6" fill="#ddd6c6" opacity=".6"/>
+              <ellipse cx="304" cy="85" rx="6.5" ry="3.5" fill="#cab68a"/><ellipse cx="302" cy="84" rx="3" ry="1.5" fill="#ecdfb8" opacity=".6"/>
+              <ellipse cx="64" cy="83" rx="6" ry="3.2" fill="#b3ab98"/>
+              <!-- 水里水豚的淡淡倒影 -->
+              <ellipse cx="186" cy="96" rx="92" ry="10" fill="#c8a070" opacity=".12" filter="url(#bankBlur)"/>
+              <!-- 零散有机水波（取代整齐的大弧线） -->
+              <g fill="none" stroke="#ffffff" stroke-linecap="round">
+                <path d="M44,102 q18,6 36,1" stroke-width="2" opacity=".26"/>
+                <path d="M150,109 q26,7 52,1" stroke-width="2" opacity=".24"/>
+                <path d="M256,103 q20,6 40,1" stroke-width="1.8" opacity=".24"/>
+                <path d="M96,116 q15,5 30,1" stroke-width="1.6" opacity=".18"/>
+                <path d="M214,118 q17,5 34,1" stroke-width="1.6" opacity=".18"/>
+              </g>
+            </svg>
+            <div class="say" id="say">早呀～昨晚那双鞋还在河里漂着哦</div>
+            <div class="capy breathe" id="capy">
+              <img class="capy-img" src="assets/capybara.png" alt="趴在岸边打盹的水豚" draggable="false"/>
+            </div>
+            <!-- 扑通过渡：许愿瓶从水里飞向豚豚 → 开盖 → 羊皮纸展开 → 豚豚读（拖时间等后端出问卷） -->
+            <div class="bottle-stage" id="bottleStage" aria-hidden="true">
+              <div class="bottle" id="bottle">
+                <div class="glass"><span class="scroll"></span></div>
+                <div class="cap"></div>
+              </div>
+              <div class="parchment" id="parchment"><i></i><i></i><i></i></div>
+            </div>
+            <!-- 水面波光：在水面线附近闪烁，不遮挡组件 -->
+            <div class="glint g1"></div><div class="glint g2"></div><div class="glint g3"></div><div class="glint g4"></div>
+            </div>
+            <div class="wbub w1"></div><div class="wbub w2"></div><div class="wbub w3"></div>
+            <div class="deck">
+              <div class="caster">
+                <div class="caster-row">
+                  <svg class="lk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11.5 6.5l1-1a4 4 0 0 1 5.7 5.7l-1 1"/><path d="M12.5 17.5l-1 1a4 4 0 0 1-5.7-5.7l1-1"/></svg>
+                  <input id="drop" placeholder="粘商品链接 / 分享文案，或点右边相机传截图" value="【淘宝】大促价保 https://e.tb.cn/h.RLiCrsU28uLGSKX?tk=ejKGgT8h0To CZ321 「X影驰RTX5060TI/5070TI/5080/5090名人堂台式机电脑独立游戏显卡」"/>
+                  <button class="shot" id="shotBtn" aria-label="上传截图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg></button>
+                  <input type="file" id="shotInput" accept="image/*" hidden>
+                </div>
+                <button class="cast-go" id="dropBtn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s5 5 5 9.5A5 5 0 1 1 7 12.5C7 8 12 3 12 3z"/></svg>
+                  扑通一下
+                </button>
+              </div>
+              <div class="quest">
+                <div class="qi"></div>
+                <div class="qm"><h4>今天河里漂来了 2 件</h4><div class="qbar"><i style="width:66%"></i></div></div>
+                <div class="qn">+8 河币</div>
+              </div>
+            </div>
+            <div class="divehint" id="diveBtn">
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              顺水看看 · 还漂着 <span id="diveCount">0</span> 件
+            </div>
+          </section>
+
+          <!-- 漂着（同一片水的深处） -->
+          <section class="under">
+            <div class="upbar" id="upBtn"></div>
+            <div class="under-head">
+              <span class="uphint" id="upBtn2">
+                <svg class="chevup" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>
+                回河湾
+              </span>
+              <div class="under-tag" id="poolCount">漂着的 · 3 件</div>
+            </div>
+            <!-- 水下悬浮微粒：极淡的浮尘，让水体有深度感 -->
+            <div class="spec s1"></div><div class="spec s2"></div><div class="spec s3"></div><div class="spec s4"></div><div class="spec s5"></div><div class="spec s6"></div>
+            <div class="dbub d1"></div><div class="dbub d2"></div><div class="dbub d3"></div><div class="dbub d4"></div><div class="dbub d5"></div>
+            <!-- 水下环境 -->
+            <div class="fish f1"></div><div class="fish f2"></div>
+            <div class="riverbed"></div>
+            <div class="weed wd1"></div><div class="weed wd2"></div><div class="weed wd3"></div><div class="weed wd4"></div>
+            <div class="peb p1"></div><div class="peb p2"></div><div class="peb p3"></div><div class="peb p4"></div>
+            <!-- 奶油泡泡池：由 JS 渲染（生成中 / 可作答 / 搁浅可决定），数量越多越小 -->
+            <div class="pool" id="pool"></div>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- 小院 -->
+      <section class="overlay yard-view" id="yard">
+        <div class="pad safe">
+          <div class="yard-head">
+            <h1>小院</h1>
+            <div class="coinchip">
+            <svg viewBox="0 0 58 58"><circle cx="29" cy="29" r="27" fill="#f3b73a"/><circle cx="29" cy="29" r="27" fill="none" stroke="#c8861a" stroke-width="3"/><circle cx="29" cy="29" r="19" fill="#ffd95b"/><circle cx="23" cy="23" r="5" fill="#ffe79a"/><path d="M29 12c2-3 6-3 7-1-3 0-5 1-7 1z" fill="#74b86a"/></svg>
+            <b id="coin">312</b> 河币
+            </div>
+          </div>
+          <div class="subhead">收集图鉴 <small id="dexCount">3 / 9 已解锁</small></div>
+          <div class="dex">
+            <div class="cell" data-name="豚豚" data-desc="住在河湾的水豚，你的搭子。它替你看着那些漂着的冲动，等你慢慢想清楚。">
+              <svg viewBox="0 0 50 50"><ellipse cx="10.5" cy="20" rx="4" ry="4.3" fill="#a8855e"/><ellipse cx="39.5" cy="20" rx="4" ry="4.3" fill="#a8855e"/><circle cx="10.8" cy="20" r="1.7" fill="#8c6f4d"/><circle cx="39.2" cy="20" r="1.7" fill="#8c6f4d"/><rect x="8.5" y="13" width="33" height="31" rx="13" fill="#c8a982"/><ellipse cx="25" cy="36.5" rx="12" ry="8" fill="#e6cfa5"/><circle cx="18" cy="24.5" r="2.7" fill="#43341f"/><circle cx="32" cy="24.5" r="2.7" fill="#43341f"/><circle cx="18.9" cy="23.6" r=".95" fill="#fff"/><circle cx="32.9" cy="23.6" r=".95" fill="#fff"/><ellipse cx="20.6" cy="34.8" rx="1.7" ry="2.1" fill="#43341f"/><ellipse cx="29.4" cy="34.8" rx="1.7" ry="2.1" fill="#43341f"/><path d="M22.2 40q2.8 2.1 5.6 0" stroke="#7a5f3e" stroke-width="1.3" fill="none" stroke-linecap="round"/><ellipse cx="25" cy="8.8" rx="4.8" ry="4.4" fill="#f7c948"/><path d="M24.6 4.8q1.3-2.4 3.8-1.3-1.5 1-1.1 2.5z" fill="#74b86a"/></svg>
+              <span>豚豚</span>
+            </div>
+            <div class="cell" data-name="柚子" data-desc="豚豚最爱的零食。每放手一件冲动，就会多攒几颗柚子。">
+              <svg viewBox="0 0 50 50"><circle cx="25" cy="28" r="15" fill="#f7c948"/><circle cx="20" cy="23" r="5" fill="#ffe79a"/><path d="M25 12c2-4 7-4 9-1-4 0-6 1-9 1z" fill="#74b86a"/></svg>
+              <span>柚子</span>
+            </div>
+            <div class="cell" data-name="纸灯笼" data-desc="傍晚会自己亮起来的纸灯笼，给河湾小院添一抹暖光。">
+              <svg viewBox="0 0 50 50"><rect x="21" y="5" width="8" height="6" rx="2" fill="#8a5f30"/><rect x="14" y="10" width="22" height="30" rx="10" fill="#f7c948"/><rect x="12" y="20" width="26" height="3.5" rx="1.5" fill="#e09a1c"/><rect x="12" y="28" width="26" height="3.5" rx="1.5" fill="#e09a1c"/></svg>
+              <span>纸灯笼</span>
+            </div>
+            <div class="cell locked"><div class="q">？</div><span>未解锁</span></div>
+            <div class="cell locked"><div class="q">？</div><span>未解锁</span></div>
+            <div class="cell locked"><div class="q">？</div><span>未解锁</span></div>
+            <div class="cell locked"><div class="q">？</div><span>未解锁</span></div>
+            <div class="cell locked"><div class="q">？</div><span>未解锁</span></div>
+            <div class="cell locked"><div class="q">？</div><span>未解锁</span></div>
+          </div>
+          <div class="subhead">用河币装点小院 </div>
+          <div class="shopitem">
+            <svg viewBox="0 0 48 48"><path d="M16 26h16l-2 14H18z" fill="#c8a982"/><ellipse cx="18" cy="18" rx="6" ry="10" fill="#79b85f"/><ellipse cx="30" cy="18" rx="6" ry="10" fill="#8ec96e"/><path d="M24 28v-10" stroke="#4f9a55" stroke-width="2"/></svg>
+            <div class="sm"><h4>河边小盆栽</h4><p>给河湾添点绿意</p></div>
+            <button class="btn-buy" data-price="60" data-item="河边小盆栽">60 枚</button>
+          </div>
+          <div class="shopitem">
+            <svg viewBox="0 0 48 48"><rect x="20" y="6" width="8" height="5" rx="2" fill="#8a5f30"/><rect x="14" y="10" width="20" height="28" rx="9" fill="#f7c948"/><rect x="12" y="20" width="24" height="3.5" rx="1.5" fill="#e09a1c"/></svg>
+            <div class="sm"><h4>暖光纸灯笼</h4><p>傍晚自动亮起</p></div>
+            <button class="btn-buy" data-price="120" data-item="暖光纸灯笼">120 枚</button>
+          </div>
+          <div class="shopitem">
+            <svg viewBox="0 0 48 48"><ellipse cx="21" cy="32" rx="15" ry="11" fill="#ffd95b"/><path d="M7 32a14 10 0 0 0 28 0z" fill="#f3c12f" opacity=".55"/><path d="M8 28q-5 0-6 3.4 3.4 1.2 6.6-1z" fill="#ffe27a"/><path d="M15 30q6.5-5.2 13.5-1.4-4.6 5-13.5 1.4z" fill="#f7c948"/><circle cx="33" cy="18" r="9.2" fill="#ffe27a"/><path d="M32 9.2q.8-3 3.2-2.2-1.2 1.6-.6 3.2z" fill="#f7c948"/><circle cx="34.6" cy="16.4" r="2.1" fill="#43341f"/><circle cx="35.4" cy="15.6" r=".75" fill="#fff"/><path d="M41 17.6q6 -.6 6 2.3 0 2.7-6 1.6z" fill="#f0892b"/><path d="M41.4 20q2.8 .3 5.2 .1" stroke="#d2731f" stroke-width=".9" fill="none"/></svg>
+            <div class="sm"><h4>邀请小黄鸭来住</h4><p>解锁新图鉴伙伴</p></div>
+            <button class="btn-buy" data-price="200" data-item="小黄鸭" data-unlock="duck">200 枚</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 我 -->
+      <section class="overlay me-view" id="me">
+        <div class="pad safe">
+          <div class="title"><h1>我和豚豚</h1></div>
+          <div class="mecard">
+            <div class="meav"></div>
+            <div><h3>Mia</h3><p>和豚豚一起住在河湾 · 第 12 天</p></div>
+          </div>
+          <div class="stat2">
+            <div class="statbox"><b>¥3,047</b><small>一共留住的</small></div>
+            <div class="statbox"><b>18</b><small>件漂远放手了</small></div>
+          </div>
+          <div class="melist">
+            <div class="mr">提醒时间 <span>每晚 23:30 ›</span></div>
+            <div class="mr">河湾主题 <span>晴日河 ›</span></div>
+            <div class="mr">豚豚的零食 <span>柚子 ›</span></div>
+            <div class="mr">安稳夜记录 <span>连续 4 夜 ›</span></div>
+            <div class="mr">数据与隐私 <span>本地优先 ›</span></div>
+          </div>
+        </div>
+      </section>
+
+      <nav class="nav">
+        <button class="active" data-target="home">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3.6 11.5h16.8v3.2a5.2 5.2 0 0 1-5.2 5.2H8.8a5.2 5.2 0 0 1-5.2-5.2z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8.5 8.6c1-1 1-2.1 0-3.1M12 8.6c1-1 1-2.1 0-3.1M15.5 8.6c1-1 1-2.1 0-3.1"/></svg>
+          河湾村
+        </button>
+        <button data-target="soaking">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5s6 6 6 10.5a6 6 0 1 1-12 0C6 8.5 12 2.5 12 2.5z"/></svg>
+          漂着
+        </button>
+        <button data-target="yard">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.2 3.4 3.4 9.6a1.6 1.6 0 0 0-.6 1.25V19a1.6 1.6 0 0 0 1.6 1.6H9.3V15a.9.9 0 0 1 .9-.9h3.6a.9.9 0 0 1 .9.9v5.6h4.9A1.6 1.6 0 0 0 21.2 19v-8.15a1.6 1.6 0 0 0-.6-1.25l-7.8-6.2a1.3 1.3 0 0 0-1.6 0z"/></svg>
+          小院
+        </button>
+        <button data-target="me">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4.2"/><path d="M4 19.6a8 8 0 0 1 16 0 1.3 1.3 0 0 1-1.3 1.3H5.3A1.3 1.3 0 0 1 4 19.6z"/></svg>
+          我
+        </button>
+      </nav>
+      <div class="home-bar"></div>
+
+      <div class="toast" id="toast">扑通 · 漂进河里啦</div>
+
+      <div class="reward" id="reward">
+        <div class="rc">
+          <div class="rbag"></div>
+          <h3>漂走了，放手啦</h3>
+          <p>这一份冲动，你让它顺水漂走了。<br/>豚豚替你把省下的收进了小院。</p>
+          <div class="rg">
+            <div><em>+259</em>河币</div>
+            <div><em>柚子 ×3</em>零食</div>
+          </div>
+          <button class="btn-ok" id="rewardOk">收下</button>
+        </div>
+      </div>
+
+      <div class="peek" id="peek">
+        <div class="pc">
+          <div class="pic" id="peekPic"></div>
+          <div class="tag2" id="peekTag"></div>
+          <h3 id="peekTitle"></h3>
+          <p id="peekDesc"></p>
+          <button class="btn-ok alt" id="peekOk">知道了</button>
+        </div>
+      </div>
+
+      <!-- 问卷面板：泡泡放大成的圆角小页面，水豚探头来问 -->
+      <div class="qpanel" id="qpanel">
+        <div class="qcard chat">
+          <img class="qhead" src="assets/capybara-peek.png" alt="水豚探头"/>
+          <div class="qprog" id="qprog"></div>
+          <div class="qchat" id="qchat"></div>
+          <div class="qinput" id="qinput"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>window.LJG_CONFIG = { API_BASE: '' };</script>
+<script src="js/api.js"></script>
+<script src="js/store.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

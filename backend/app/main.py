@@ -1,10 +1,11 @@
 """
-冷静购 最简后端（试用 UI 用）。
-GET  /              → 试用页（静态 HTML）
+冷静购 后端 + 河湾村原型页托管。
+GET  /              → 河湾村原型页（项目根 web/，静态托管，与 /api 同源）
+GET  /legacy        → 旧极简试用页（app/web/index.html，保留参考）
 POST /api/recognize → {text} 或 {image(base64 data URL)} → 识别商品 + 真实口碑 + 行情 + 生成五问
 POST /api/report    → {session_id, answers:[{id,value}]} → 冷静报告
 
-注：session 用内存字典，仅供单机试用；正式版换 React 前端 + 持久化。
+注：session 用内存字典，仅供单机试用；沉淀池/河币由前端 localStorage 持久化。
 """
 from __future__ import annotations
 
@@ -13,7 +14,9 @@ import uuid
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app.services.insight import build_report
@@ -22,7 +25,15 @@ from app.services.questionnaire import Answer, generate_questionnaire, generate_
 from app.services.recognition import recognize_link, recognize_screenshot, review_query
 
 app = FastAPI(title="冷静购 · 试用")
-_WEB = os.path.join(os.path.dirname(__file__), "web")
+
+# 前后端分开起服务时（如静态服务器跑前端、本服务跑 API）才需要；同源托管不依赖它。
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], allow_methods=["*"], allow_headers=["*"], allow_credentials=False,
+)
+
+_WEB = os.path.join(os.path.dirname(__file__), "web")               # 旧极简试用页（/legacy）
+_ROOT_WEB = os.path.join(os.path.dirname(__file__), "..", "..", "web")  # 河湾村原型页（首页）
 _SESSIONS: Dict[str, Dict[str, Any]] = {}
 
 
@@ -41,8 +52,9 @@ class ReportBody(BaseModel):
     answers: List[AnswerItem]
 
 
-@app.get("/")
-def index():
+@app.get("/legacy")
+def legacy_index():
+    """旧的极简试用页，保留作参考。"""
     return FileResponse(os.path.join(_WEB, "index.html"))
 
 
@@ -109,3 +121,8 @@ def _product_view(product: Dict[str, Any]) -> Dict[str, Any]:
         "promotion": product.get("promotion_stimuli") or [],
         "core_query": u.get("core_query"),
     }
+
+
+# 必须放在所有 /api 路由之后：把河湾村原型页(项目根 web/)挂为首页，与 /api 同源。
+# html=True 时 "/" 自动返回 web/index.html，并托管 css/js/assets。
+app.mount("/", StaticFiles(directory=_ROOT_WEB, html=True), name="web")

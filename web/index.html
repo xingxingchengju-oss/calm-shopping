@@ -106,7 +106,7 @@
               <div class="caster">
                 <div class="caster-row">
                   <svg class="lk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11.5 6.5l1-1a4 4 0 0 1 5.7 5.7l-1 1"/><path d="M12.5 17.5l-1 1a4 4 0 0 1-5.7-5.7l1-1"/></svg>
-                  <input id="drop" placeholder="粘商品链接 / 分享文案，或点右边相机传截图" value="【淘宝】大促价保 https://e.tb.cn/h.RLiCrsU28uLGSKX?tk=ejKGgT8h0To CZ321 「X影驰RTX5060TI/5070TI/5080/5090名人堂台式机电脑独立游戏显卡」"/>
+                  <input id="drop" placeholder="粘商品链接 / 分享文案，或拍截图"/>
                   <button class="shot" id="shotBtn" aria-label="上传截图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg></button>
                   <input type="file" id="shotInput" accept="image/*" hidden>
                 </div>
@@ -145,8 +145,23 @@
             <div class="riverbed"></div>
             <div class="weed wd1"></div><div class="weed wd2"></div><div class="weed wd3"></div><div class="weed wd4"></div>
             <div class="peb p1"></div><div class="peb p2"></div><div class="peb p3"></div><div class="peb p4"></div>
-            <!-- 奶油泡泡池：由 JS 渲染（生成中 / 可作答 / 搁浅可决定），数量越多越小 -->
+            <!-- 奶油泡泡池：<24h 漂着的，由 JS 渲染 -->
             <div class="pool" id="pool"></div>
+            <!-- 河床入口：点一下「继续下潜」到河床地层 -->
+            <div class="soil-hint" id="soilHint">⛏ 翻翻河床 · 沉底 <span id="riverbedCount">0</span> 件</div>
+          </section>
+
+          <!-- 河床地层：过 24h 沉底的商品，越久越深，一层一件 -->
+          <section class="soil">
+            <div class="soil-head">
+              <span class="uphint" id="soilUp">
+                <svg class="chevup" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>
+                回到水面
+              </span>
+              <div class="under-tag">河床地层 · 沉底 <span id="soilCount">0</span> 件</div>
+            </div>
+            <div class="strata" id="soilStrata"></div>
+            <div class="soil-empty" id="soilEmpty">河床还很干净～<br>沉满 24 小时的东西才会落到这儿</div>
           </section>
 
         </div>

@@ -27,14 +27,30 @@
   // ---- 沉淀池 ----
   function getPool() { return state.pool; }
   function getPoolItem(id) { return state.pool.find(x => x.id === id); }
-  function addPoolItem(item) { state.pool.push(item); write(KEY_POOL, state.pool); }
-  function removePoolItem(id) { state.pool = state.pool.filter(x => x.id !== id); write(KEY_POOL, state.pool); }
+
+  // 写盘：图片 input(dataURL) 可能很大；配额超了就先丢掉图片 input 再存，
+  // 保证商品本身持久化（这些项的「重新扑通」降级为重新丢图）。文本 input 很小，保留。
+  function savePool() {
+    try { localStorage.setItem(KEY_POOL, JSON.stringify(state.pool)); return true; }
+    catch (e) { /* 多半是配额超了 */ }
+    try {
+      const lean = state.pool.map(it => {
+        if (it.input && it.input.image) { const c = Object.assign({}, it); c.input = null; return c; }
+        return it;
+      });
+      localStorage.setItem(KEY_POOL, JSON.stringify(lean));
+      state.pool.forEach(it => { if (it.input && it.input.image) it.input = null; });
+      return true;
+    } catch (e2) { return false; }
+  }
+  function addPoolItem(item) { state.pool.push(item); savePool(); }
+  function removePoolItem(id) { state.pool = state.pool.filter(x => x.id !== id); savePool(); }
 
   // ---- 河币 ----
   function getCoins(def) { return state.coins == null ? def : state.coins; }
   function setCoins(n) { state.coins = n; write(KEY_COINS, n); }
 
   window.LJG_STORE = {
-    now, getPool, getPoolItem, addPoolItem, removePoolItem, getCoins, setCoins,
+    now, getPool, getPoolItem, addPoolItem, removePoolItem, savePool, getCoins, setCoins,
   };
 })();

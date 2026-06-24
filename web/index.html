@@ -174,7 +174,7 @@
             <h1>小院</h1>
             <div class="coinchip">
             <svg viewBox="0 0 58 58"><circle cx="29" cy="29" r="27" fill="#f3b73a"/><circle cx="29" cy="29" r="27" fill="none" stroke="#c8861a" stroke-width="3"/><circle cx="29" cy="29" r="19" fill="#ffd95b"/><circle cx="23" cy="23" r="5" fill="#ffe79a"/><path d="M29 12c2-3 6-3 7-1-3 0-5 1-7 1z" fill="#74b86a"/></svg>
-            <b id="coin">312</b> 河币
+            <b id="coin">0</b> 河币
             </div>
           </div>
           <div class="subhead">收集图鉴 <small id="dexCount">3 / 9 已解锁</small></div>
@@ -224,6 +224,13 @@
           <div class="mecard">
             <div class="meav"></div>
             <div><h3>Mia</h3><p>和豚豚一起住在河湾 · 第 12 天</p></div>
+          </div>
+          <div class="savecard" id="acctCard">
+            <div class="sc-info">
+              <b id="acctTitle">登录后才会保存</b>
+              <span id="acctSub">识别 / 报告免登录；保存进度需邮箱登录</span>
+            </div>
+            <button class="sc-btn" id="acctBtn">登录</button>
           </div>
           <div class="stat2">
             <div class="statbox"><b>¥3,047</b><small>一共留住的</small></div>
@@ -284,6 +291,26 @@
         </div>
       </div>
 
+      <!-- 统一邮箱 OTP 登录（保存类动作拦截 / 「我」页登录共用） -->
+      <div class="bindm" id="loginModal">
+        <div class="bc">
+          <h3 id="loginTitle">邮箱验证码登录</h3>
+          <p>新邮箱会自动注册，老邮箱直接登录。豚豚只用邮箱保存你的进度。</p>
+          <div id="loginStepEmail">
+            <input class="qtext" id="loginEmail" type="email" inputmode="email" autocomplete="email" placeholder="你的邮箱" />
+          </div>
+          <div id="loginStepCode" class="lg-hide">
+            <input class="qtext" id="loginCode" inputmode="numeric" autocomplete="one-time-code" placeholder="邮箱里的 6 位验证码" />
+          </div>
+          <div class="bind-msg" id="loginMsg"></div>
+          <div class="bind-acts">
+            <button class="btn-ok alt lg-hide" id="loginSkip">仅完成本次·不保存</button>
+            <button class="btn-ok" id="loginPrimary">发送验证码</button>
+          </div>
+          <button class="login-close" id="loginClose">关闭</button>
+        </div>
+      </div>
+
       <!-- 问卷面板：泡泡放大成的圆角小页面，水豚探头来问 -->
       <div class="qpanel" id="qpanel">
         <div class="qcard chat">
@@ -298,9 +325,13 @@
   </div>
 </div>
 
-<script>window.LJG_CONFIG = { API_BASE: '' };</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/api.js"></script>
 <script src="js/store.js"></script>
+<script src="js/draft.js"></script>
 <script src="js/main.js"></script>
+<script src="js/account.js"></script>
 </body>
 </html>

@@ -11,11 +11,18 @@
   async function post(path, body) {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+    const headers = { 'Content-Type': 'application/json' };
+    try {                                   // 前向兼容：带登录态 token（后端 MVP 暂不校验，未来限流/归属用）
+      if (window.LJG_AUTH && window.LJG_AUTH.getAccessToken) {
+        const tk = await window.LJG_AUTH.getAccessToken();
+        if (tk) headers['Authorization'] = 'Bearer ' + tk;
+      }
+    } catch (e) { /* 离线/未登录，忽略 */ }
     let res;
     try {
       res = await fetch(API_BASE + path, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: headers,
         body: JSON.stringify(body),
         signal: ctrl.signal,
       });

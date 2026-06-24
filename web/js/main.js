@@ -144,6 +144,7 @@ function endCastOk(data){
     pricing:data.pricing||null, q:data.questionnaire||{questions:[]}, answers:[],
     input:lastInput
   };
+  if(window.LJG_DRAFT) LJG_DRAFT.saveDraft(current);   // 未登录也留草稿（剥图、2h、不写云）
   const name=(current.product&&current.product.name)||(current.q&&current.q.product_name)||'这件东西';
   capySay('在决定买「'+name+'」之前，豚豚想问你几个小问题～');
   setTimeout(openChat,1300);
@@ -289,6 +290,7 @@ async function finishChat(){
     return;
   }
   current.report=rep;
+  if(window.LJG_DRAFT) LJG_DRAFT.saveDraft(current);   // 报告进草稿：刷新可续看、登录后用于写库
   renderReport(rep);
 }
 
@@ -324,26 +326,80 @@ function priceOf(o){ const v=o&&o.price; return (typeof v==='number'&&isFinite(v
 function onAction(key){
   const fromPool=current&&current.fromPool;
   if(key==='re_eval'){ reEvaluate(current.poolId); return; }
-  if(key==='buy'){
-    if(fromPool){ LJG_STORE.removePoolItem(current.poolId); renderPool(); }
-    closeChat(); tip('好，这个买得安心～'); return;
-  }
+  if(fromPool){ onActionPool(key); return; }     // 池中项再决策：必为已登录，走原持久化
+  terminalAction(key);                            // 新鲜决策：未登录则拦截登录
+}
+
+/* 池中项（已登录）再决策 —— 原逻辑 */
+function onActionPool(key){
+  if(key==='buy'){ LJG_STORE.resolvePoolItem(current.poolId,'bought'); renderPool(); closeChat(); tip('好，这个买得安心～'); return; }
   if(key==='keep_floating'){
-    if(fromPool){
-      const it=LJG_STORE.getPoolItem(current.poolId);
-      closeChat(); tip(it&&depthFrac(it)>=1?'好，让它继续在河床躺着～':'好，让它再漂一会儿～'); return;
-    }
-    floatToPool(); closeChat(); tip('扑通 · 让它在沉淀池里漂着'); setTimeout(()=>go('soaking'),320); return;
+    const it=LJG_STORE.getPoolItem(current.poolId);
+    closeChat(); tip(it&&depthFrac(it)>=1?'好，让它继续在河床躺着～':'好，让它再漂一会儿～'); return;
   }
   if(key==='let_go'){
-    let price, deliberated=false;
-    if(fromPool){
-      const it=LJG_STORE.getPoolItem(current.poolId);
-      price=it?it.price:null; deliberated=!!(it&&depthFrac(it)>=1);
-      LJG_STORE.removePoolItem(current.poolId); renderPool();
-    } else { price=priceOf(current.product); }
-    closeChat(); askReward(price, deliberated); return;
+    const it=LJG_STORE.getPoolItem(current.poolId); if(!it){ closeChat(); return; }
+    const id=it.id, price=it.price, deliberated=!!(depthFrac(it)>=1);
+    LJG_STORE.resolvePoolItem(current.poolId,'let_go'); renderPool(); closeChat();   // 移出池 + 升级为 let_go
+    const amt=coinAmount(price)+(deliberated?20:0);
+    LJG_STORE.confirm(id).then(ok=>{ if(ok) awaitReward(id, amt, deliberated); else tip('已记下，网络好了会自动同步～'); });   // 确认后再发奖励，防重复
+    return;
   }
+}
+
+/* 新鲜决策：已登录直接持久化；未登录弹登录窗（验证码登录并保存 / 仅本次不保存 / 关闭） */
+function terminalAction(key){
+  const item=buildRecord();                                       // 稳定 client_id（存在 current.client_id）
+  const price=(key==='let_go')?priceOf(current.product):null;
+  if(window.LJG_AUTH && LJG_AUTH.isLoggedIn()){ runPersist(key, item, price); return; }
+  if(!(window.LJG_ACCOUNT && LJG_ACCOUNT.gateSave)){ applyTerminalNoSave(key); return; }   // 无登录模块兜底
+  LJG_ACCOUNT.gateSave({ pending:{action:key, item:item, price:price}, onSkip:()=>applyTerminalNoSave(key) });
+}
+
+/* 持久化写入 + 云端确认；确认成功才清 pending/draft（失败保留待重试）。
+   let_go 走「先确认 decision，再进入 awaiting_reward 弹奖励」，防超时续跑重复发币。 */
+async function doPersist(key, item, price){
+  if(key==='let_go'){ await persistLetGo(item, price, false); coins=LJG_STORE.getCoins(coins); coinEl.textContent=coins; return; }
+  let p;
+  if(key==='keep_floating'){
+    p=LJG_STORE.recordAndConfirm(item,'floating'); renderPool();   // recordAndConfirm 同步入池缓存
+    closeChat(); tip('扑通 · 让它在沉淀池里漂着'); setTimeout(()=>go('soaking'),320);
+  } else { /* buy */
+    closeChat(); tip('好，这个买得安心～');
+    p=LJG_STORE.recordAndConfirm(item,'bought');
+  }
+  coins=LJG_STORE.getCoins(coins); coinEl.textContent=coins;
+  const ok=await p; onPersistDone(ok); return ok;
+}
+function onPersistDone(ok){
+  if(ok){ if(window.LJG_DRAFT){ LJG_DRAFT.clearPending(); LJG_DRAFT.clearDraft(); } }
+  else { tip('已记下，网络好了会自动同步～'); }     // 保留 pending/draft，恢复联网/下次重试
+}
+
+/* 未登录选「仅完成本次·不保存」：完成 UI 收尾，不写库/不发币/不计统计；报告留草稿（关页即逝） */
+function applyTerminalNoSave(key){
+  if(key==='keep_floating'){ closeChat(); tip('先留在这次报告里，登录后才会真正留在沉淀池～'); }
+  else if(key==='let_go'){ closeChat(); tip('放手啦～这次先没存（登录可记录 + 攒河币）'); }
+  else { closeChat(); tip('好，这个买得安心～'); }
+}
+
+/* 单飞锁：直接保存与登录续跑共用，保证同一时刻只有一次持久化在跑
+   （否则队列 flush 的 synced 事件可能在直接 let_go 进行中再触发续跑，导致重复发币）。 */
+let _resuming=false;
+async function runPersist(key, item, price){
+  if(_resuming) return;
+  _resuming=true;
+  try{ await doPersist(key, item, price); } finally { _resuming=false; }
+}
+/* 登录成功 / 网络恢复后续跑被拦的保存动作（已登录态由调用方保证 store 已 init） */
+async function resumePending(){
+  if(_resuming) return;
+  if(!(window.LJG_AUTH && LJG_AUTH.isLoggedIn())) return;
+  const pend=window.LJG_DRAFT && LJG_DRAFT.loadPending();
+  if(!pend || !pend.item || !pend.action) return;
+  _resuming=true;
+  try{ await doPersist(pend.action, pend.item, pend.price); }   // 内部确认后清 pending/draft（锁覆盖整段）
+  finally{ _resuming=false; }
 }
 
 /* 重新扑通：用存好的原始输入复跑一遍（无需再传链接/截图），相当于重置重评 */
@@ -363,19 +419,20 @@ function reEvaluate(id){
 
 function closeChat(){ qpanel.classList.remove('show'); current=null; }
 
-/* 继续漂着 → 入沉淀池，存「完整决策档案」便于以后回看 */
-function floatToPool(){
+/* 从当前会话构造一条「完整决策档案」；client_id 在 current 上生成一次并复用（幂等、供登录续跑） */
+function buildRecord(){
   const p=current.product||{}, rep=current.report||{}, t=LJG_STORE.now();
-  LJG_STORE.addPoolItem({
-    id:'it_'+t.toString(36)+Math.random().toString(36).slice(2,6),
+  if(!current.client_id) current.client_id='it_'+t.toString(36)+Math.random().toString(36).slice(2,6);
+  return {
+    id: current.client_id,
     title: p.name || (current.q&&current.q.product_name) || '一件小心动',
     price: priceOf(p),
     product:p, report:rep, answers:current.answers||[],
+    review: current.review||{}, pricing: current.pricing||null,
     review_digest: rep.review_digest||'', score_summary: rep.score_summary||{},
     session_id: current.session_id||null, input: current.input||null,
     floatedAt:t, createdAt:t
-  });
-  renderPool();
+  };
 }
 
 /* ---------- 放手 → 奖励弹层（price 可能为 null，用安全默认值） ---------- */
@@ -383,18 +440,47 @@ const reward=document.getElementById('reward'); backdropClose(reward);
 const rewardOk=document.getElementById('rewardOk');
 let pendingCoins=0, pendingDeliberated=false;
 function coinAmount(price){ return (typeof price==='number'&&isFinite(price)&&price>0)?Math.round(price):30; }
-function askReward(price, deliberated){
-  pendingDeliberated=!!deliberated;
-  pendingCoins=coinAmount(price)+(deliberated?20:0);          // 在河床躺过 24h 才放手，多给一点正向反馈
-  const em=reward.querySelector('.rg em'); if(em) em.textContent='+'+pendingCoins;
+/* let_go：先确认 decision 落库（防重复发币），再进入 awaiting_reward 并弹奖励 */
+async function persistLetGo(item, price, deliberated){
+  closeChat();
+  const ok=await LJG_STORE.recordAndConfirm(item,'let_go');
+  if(ok){
+    if(window.LJG_DRAFT) LJG_DRAFT.clearPending();                 // 决策已落库 → 清待办，续跑不会重复
+    const amt=coinAmount(price!=null?price:item.price)+(deliberated?20:0);
+    awaitReward(item.id, amt, deliberated);
+  } else {
+    tip('已记下，网络好了会自动同步～');                            // 未确认 → 保留 pending，重试时再发奖励
+  }
+}
+/* 记一笔「待领奖励」(sessionStorage 标记，绑定 uid) 并弹奖励层；标记让刷新最多再展示一次，绝不重跑 let_go */
+function awaitReward(clientId, amount, deliberated){
+  const uid=(window.LJG_AUTH && LJG_AUTH.currentUserId)?LJG_AUTH.currentUserId():null;
+  if(window.LJG_DRAFT && LJG_DRAFT.saveReward) LJG_DRAFT.saveReward({client_id:clientId, amount:amount, deliberated:!!deliberated, uid:uid});
+  showReward(amount, deliberated);
+}
+function showReward(amount, deliberated){
+  if(reward.classList.contains('show')) return;                    // 已在展示则不重复
+  pendingCoins=amount; pendingDeliberated=!!deliberated;
+  const em=reward.querySelector('.rg em'); if(em) em.textContent='+'+amount;
   const h=reward.querySelector('h3'); if(h) h.textContent=deliberated?'想了这么久，还能放手':'漂走了，放手啦';
   reward.classList.add('show');
 }
+/* 刷新/登录后若有「待领奖励」→ 展示一次（绝不重新执行 let_go 写入） */
+function maybeShowOwedReward(){
+  if(reward.classList.contains('show')) return;
+  const r=window.LJG_DRAFT && LJG_DRAFT.loadReward && LJG_DRAFT.loadReward();
+  const uid=(window.LJG_AUTH && LJG_AUTH.currentUserId)?LJG_AUTH.currentUserId():null;
+  if(r && typeof r.amount==='number' && uid && r.uid===uid) showReward(r.amount, !!r.deliberated);   // 奖励绑定 uid，切号不串
+}
 rewardOk.addEventListener('click',()=>{
   reward.classList.remove('show');
-  setCoins(coins+pendingCoins);
-  tip((pendingDeliberated?'真棒，想通了 · +':'+')+pendingCoins+' 河币 · 收进小院啦');
+  const r=(window.LJG_DRAFT && LJG_DRAFT.loadReward)?LJG_DRAFT.loadReward():null;
+  const uid=(window.LJG_AUTH && LJG_AUTH.currentUserId)?LJG_AUTH.currentUserId():null;
+  if(window.LJG_DRAFT){ LJG_DRAFT.clearReward(); LJG_DRAFT.clearDraft(); }    // 先清 reward/draft，再发币
   pendingCoins=0; pendingDeliberated=false;
+  if(!uid || !r || r.uid!==uid || typeof r.amount!=='number') return;        // 奖励不属于当前用户 → 不发币
+  setCoins(coins+r.amount);                                                  // 失败由 coins 队列重试
+  tip((r.deliberated?'真棒，想通了 · +':'+')+r.amount+' 河币 · 收进小院啦');
   setTimeout(()=>go('yard'),420);
 });
 
@@ -566,5 +652,40 @@ document.querySelectorAll('.melist .mr').forEach(r=>{
 document.querySelector('.streak').addEventListener('click',()=>tip('连续 4 晚没有冲动下单，豚豚很安心'));
 document.querySelector('.quest').addEventListener('click',()=>tip('今天已经有 2 件漂进河里啦 · +8 河币'));
 
-/* ---------- 启动 ---------- */
-renderPool();
+/* ---------- 启动：未登录可用(不持久化)，登录后才启用云端 ---------- */
+renderPool();                                        // 未登录=空池
+if(window.LJG_AUTH && LJG_AUTH.onChange) LJG_AUTH.onChange(onAuthChanged);   // 登录态变化 → 重渲染 + 续跑
+// 队列 flush 完成（同步成功）→ 自动续跑被拦的 let_go + 展示待领奖励（网络恢复后无需刷新）
+window.addEventListener('ljg:sync', e=>{ if(e && e.detail && e.detail.status==='synced'){ resumePending(); maybeShowOwedReward(); } });
+(async function boot(){
+  try{ if(window.LJG_AUTH && LJG_AUTH.refreshUser) await LJG_AUTH.refreshUser(); }   // 含残留匿名/脏 token 清理
+  catch(e){ console.warn('[LJG] 启动鉴权失败', e); }
+  await onAuthChanged();
+  if(!(window.LJG_AUTH && LJG_AUTH.isLoggedIn())) restoreDraftReport();   // 未登录：草稿报告可续看
+})();
+
+/* 登录态变化：登录→init+续跑被拦动作；登出→clear+空态。重渲染河币/沉淀池。 */
+async function onAuthChanged(){
+  const loggedIn=!!(window.LJG_AUTH && LJG_AUTH.isLoggedIn());
+  if(loggedIn){
+    try{ if(window.LJG_STORE) await LJG_STORE.init(LJG_AUTH.currentUserId()); }catch(e){ console.warn('[LJG] init 失败',e); }
+    coins=LJG_STORE.getCoins(0); coinEl.textContent=coins; renderPool();
+    await resumePending();
+    maybeShowOwedReward();   // 刷新/登录后有待领奖励 → 展示一次（不重跑 let_go）
+  } else {
+    try{ if(window.LJG_STORE) LJG_STORE.clear(); }catch(e){}
+    if(window.LJG_DRAFT){ LJG_DRAFT.clearPending(); LJG_DRAFT.clearReward(); }   // 切号清待办/待领奖励，防串
+    coins=LJG_STORE.getCoins(0); coinEl.textContent=coins; renderPool();
+  }
+}
+
+/* 未登录刷新后，把 sessionStorage 里的报告草稿重开，方便继续（剥图、2h TTL 由 draft.js 管） */
+function restoreDraftReport(){
+  const d=window.LJG_DRAFT && LJG_DRAFT.loadDraft();
+  if(!d || !d.report) return;
+  current=d;
+  qprog.innerHTML=''; qchat.innerHTML=''; qinput.innerHTML='';
+  qpanel.classList.add('show');
+  pushCapy('上次还没决定的「'+((d.product&&d.product.name)||'它')+'」，报告先给你看回～');
+  renderReport(d.report||{}, 'fresh');
+}

@@ -89,7 +89,7 @@ body{display:grid;place-items:center;padding:24px 14px 44px;}
 .capy{position:absolute;left:50%;top:176px;transform:translateX(-50%);width:208px;height:121px;z-index:5;cursor:pointer;transform-origin:50% 90%;}
 .capy.breathe{animation:breathe 5.5s ease-in-out infinite;}
 .capy-img{width:100%;height:100%;display:block;object-fit:contain;-webkit-user-drag:none;user-select:none;filter:drop-shadow(0 5px 7px rgba(120,90,40,.16));}
-.say{position:absolute;left:50%;top:128px;transform:translateX(-50%);z-index:7;background:var(--paper);border-radius:18px;padding:10px 18px;font-weight:600;font-size:13px;color:var(--ink);white-space:nowrap;box-shadow:0 5px 14px rgba(120,90,40,.18);line-height:1.4;max-width:280px;}
+.say{position:absolute;left:50%;top:128px;transform:translateX(-50%);z-index:7;background:var(--paper);border-radius:18px;padding:10px 18px;font-weight:600;font-size:13px;color:var(--ink);text-align:center;overflow-wrap:break-word;box-shadow:0 5px 14px rgba(120,90,40,.18);line-height:1.5;max-width:300px;}
 .say::after{content:"";position:absolute;left:70%;bottom:-6px;transform:translateX(-50%);border:9px solid transparent;border-top-color:var(--paper);border-bottom:0;filter:drop-shadow(0 2px 3px rgba(120,90,40,.1));}
 
 /* 输入 + 任务，浮在水面上 */
@@ -471,6 +471,17 @@ body{display:grid;place-items:center;padding:24px 14px 44px;}
 .pool{display:block;position:absolute;left:12px;right:12px;top:96px;height:560px;}
 .bub.float{position:absolute;margin:0!important;width:116px;height:116px;
   transition:top 1.4s cubic-bezier(.4,0,.3,1),left .8s ease;}
+/* 沉淀石：浅色·微透的小石头，每颗颜色不同（--stone-h 由 JS 按条目稳定生成，刷新/下沉都不变色） */
+.bub.float .bub-clip{
+  background:radial-gradient(120% 115% at 35% 22%,
+    hsla(var(--stone-h,40),75%,91%,.72) 0%,
+    hsla(var(--stone-h,40),68%,83%,.68) 50%,
+    hsla(var(--stone-h,40),60%,74%,.66) 100%);
+  border:1.5px solid hsla(var(--stone-h,40),60%,90%,.5);
+  box-shadow:0 10px 20px rgba(10,55,53,.16),0 3px 7px rgba(10,55,53,.10),
+    inset 0 6px 12px hsla(var(--stone-h,40),85%,97%,.4),inset 0 -12px 18px hsla(var(--stone-h,40),50%,64%,.34);
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
+.bub.float .b-sub{color:var(--ink-2);}
 .bub.float .b-tag{color:var(--water-3);background:rgba(79,176,168,.18);}
 .bub.float.sunk{filter:saturate(.9) brightness(.96);}
 .bub.float.sunk .b-tag{color:#7a6a4a;background:rgba(150,130,90,.2);}
@@ -517,7 +528,7 @@ body{display:grid;place-items:center;padding:24px 14px 44px;}
 }
 
 /* ============ P2a：保存进度 / 绑定邮箱 ============ */
-.savecard{display:flex;align-items:center;gap:12px;margin:0 0 16px;padding:15px 16px;border-radius:20px;
+.savecard{display:flex;align-items:center;gap:12px;margin:16px 0;padding:15px 16px;border-radius:20px;
   background:linear-gradient(180deg,var(--paper),#fbf1da);box-shadow:var(--clay),inset 0 2px 0 rgba(255,255,255,.6);border-left:4px solid var(--wood);}
 .savecard .sc-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
 .savecard .sc-info b{font-size:14px;font-weight:700;color:var(--ink);}
@@ -526,6 +537,9 @@ body{display:grid;place-items:center;padding:24px 14px 44px;}
   background:var(--grass-d);box-shadow:0 4px 0 var(--leaf-d);transition:transform .12s,box-shadow .12s;}
 .sc-btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--leaf-d);}
 .sc-btn:disabled{opacity:.6;cursor:default;box-shadow:none;}
+/* 退出登录：暖珊瑚红（危险/收尾感，仍贴合河湾暖调） */
+.sc-btn.signout{background:#e07a5f;box-shadow:0 4px 0 #c25e45;}
+.sc-btn.signout:active{box-shadow:0 2px 0 #c25e45;}
 .bindm{position:absolute;inset:0;z-index:53;display:none;place-items:center;background:rgba(45,36,24,.42);backdrop-filter:blur(3px);padding:20px;}
 .bindm.show{display:grid;animation:fade .3s ease;}
 .bindm .bc{width:84%;max-width:300px;padding:22px 20px;border-radius:24px;background:var(--paper);

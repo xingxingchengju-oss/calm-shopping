@@ -114,7 +114,7 @@ function runBottleAnim(){
   capySay('咦，河里漂来一个瓶子，豚豚捞起来看看～');
   const readLines=['豚豚正在翻别人的真实评价…','这条评价有点意思…','再看看价格最近怎么走…','嗯…让豚豚认真读读羊皮纸～','马上好啦，再等豚豚一下下'];
   let ri=0;
-  readTimer=setInterval(()=>{ ri=(ri+1)%readLines.length; capySay(readLines[ri]); }, 2200);
+  readTimer=setInterval(()=>{ ri=(ri+1)%readLines.length; capySay(readLines[ri]); }, 3600);   // 放慢切换：像在认真思考，别走马灯
   return new Promise(res=>setTimeout(res,2600));
 }
 function stopReading(){
@@ -521,8 +521,16 @@ function renderPool(){
   renderStrata(sunk, newlySunk);
   lastFloatingIds=new Set(floating.map(it=>it.id));
 }
+/* 每颗沉淀石一个稳定的柔和色相（按 id 取，刷新/下沉都不变色；避开水体的青绿色相） */
+const STONE_HUES=[348,20,44,110,158,200,224,256,286,322];
+function stoneHue(it){
+  const s=String((it&&(it.id||it.title))||'');
+  let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0;
+  return STONE_HUES[h%STONE_HUES.length];
+}
 function buildBubble(it){
   const b=document.createElement('div'); b.className='bub float'; b.dataset.id=it.id;
+  b.style.setProperty('--stone-h', stoneHue(it));
   const clip=document.createElement('div'); clip.className='bub-clip';
   const inner=document.createElement('div'); inner.className='b-in';
   const t=document.createElement('div'); t.className='b-title'; t.textContent=it.title||'心动';
@@ -650,7 +658,6 @@ document.querySelectorAll('.melist .mr').forEach(r=>{
   r.addEventListener('click',()=>{const k=(r.childNodes[0].textContent||'').trim();tip(meTips[k]||'demo · 暂未开放');});
 });
 document.querySelector('.streak').addEventListener('click',()=>tip('连续 4 晚没有冲动下单，豚豚很安心'));
-document.querySelector('.quest').addEventListener('click',()=>tip('今天已经有 2 件漂进河里啦 · +8 河币'));
 
 /* ---------- 启动：未登录可用(不持久化)，登录后才启用云端 ---------- */
 renderPool();                                        // 未登录=空池

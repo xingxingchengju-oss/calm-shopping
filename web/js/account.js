@@ -72,11 +72,11 @@
     if (u && u.email) {
       if (acctTitle) acctTitle.textContent = '已登录';
       if (acctSub) acctSub.textContent = u.email;
-      if (acctBtn) acctBtn.textContent = '退出登录';
+      if (acctBtn) { acctBtn.textContent = '退出登录'; acctBtn.classList.add('signout'); }   // 已登录 → 红色退出
     } else {
       if (acctTitle) acctTitle.textContent = '登录后才会保存';
       if (acctSub) acctSub.textContent = '识别 / 报告免登录；保存进度需邮箱登录';
-      if (acctBtn) acctBtn.textContent = '登录';
+      if (acctBtn) { acctBtn.textContent = '登录'; acctBtn.classList.remove('signout'); }     // 未登录 → 绿色登录 CTA
     }
   }
   if (A && A.onChange) A.onChange(() => { refreshCard(); if (A.isLoggedIn && A.isLoggedIn()) close(); });

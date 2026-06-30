@@ -49,6 +49,45 @@
   function getPool() { return state.pool; }
   function getPoolItem(id) { return state.pool.find(x => x.id === id); }
   function getCoins(def) { return state.coins == null ? def : state.coins; }
+  async function fetchCompanionOverview() {
+    const uid = state.userId || ((window.LJG_AUTH && window.LJG_AUTH.currentUserId) ? window.LJG_AUTH.currentUserId() : null);
+    const c = sb();
+    const empty = { totalDecisions: null, letGoCount: null, recentDecisions: null };
+    if (!uid || !c) return empty;
+
+    const results = await Promise.allSettled([
+      c.from('decisions').select('client_id', { count: 'exact', head: true }).eq('user_id', uid),
+      c.from('decisions').select('client_id', { count: 'exact', head: true }).eq('user_id', uid).eq('status', 'let_go'),
+      c.from('decisions')
+        .select('client_id,title,status,created_at,resolved_at,price')
+        .eq('user_id', uid)
+        .order('created_at', { ascending: false })
+        .limit(20),
+    ]);
+
+    function countResult(result, label) {
+      if (result.status === 'rejected' || !result.value || result.value.error) {
+        const err = result.status === 'rejected' ? result.reason : result.value.error;
+        console.warn('[LJG] ' + label + '查询失败', (err && err.message) || err);
+        return null;
+      }
+      return typeof result.value.count === 'number' ? result.value.count : 0;
+    }
+    function rowsResult(result) {
+      if (result.status === 'rejected' || !result.value || result.value.error) {
+        const err = result.status === 'rejected' ? result.reason : result.value.error;
+        console.warn('[LJG] 最近陪伴记录查询失败', (err && err.message) || err);
+        return null;
+      }
+      return Array.isArray(result.value.data) ? result.value.data : [];
+    }
+
+    return {
+      totalDecisions: countResult(results[0], '陪伴总数'),
+      letGoCount: countResult(results[1], '已放手数量'),
+      recentDecisions: rowsResult(results[2]),
+    };
+  }
 
   function rowToItem(r) {
     const rep = r.report || {};
@@ -166,7 +205,7 @@
 
       let decOk = false, statsOk = false, cloudPool = [], cloudCoins = null;
       try {
-        const { data, error } = await c.from('decisions').select('*').in('status', ['floating', 'riverbed']).order('created_at', { ascending: true });
+        const { data, error } = await c.from('decisions').select('*').eq('user_id', uid).in('status', ['floating', 'riverbed']).order('created_at', { ascending: true });
         if (error) throw error; cloudPool = (data || []).map(rowToItem); decOk = true;
       } catch (e) { console.warn('[LJG] 拉取 decisions 失败，保留本地', (e && e.message) || e); }
       try {
@@ -202,7 +241,7 @@
 
   window.LJG_STORE = {
     now, init, clear, resync,
-    getPool, getPoolItem, getCoins,
+    getPool, getPoolItem, getCoins, fetchCompanionOverview,
     addPoolItem, removePoolItem, resolvePoolItem, recordDecision, recordAndConfirm, setCoins,
     confirm: function (clientId, timeoutMs) { return confirmClientId(clientId, timeoutMs || 10000); },
     syncStatus: function () { return state.syncStatus; }, savePool: mirrorPool,

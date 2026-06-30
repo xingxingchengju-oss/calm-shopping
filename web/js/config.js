@@ -6,6 +6,8 @@
    ============================================================ */
 window.LJG_CONFIG = {
   API_BASE: '',
+  // 线上可填完整回跳地址；留空时使用当前页面的 ?auth=recovery。该地址需加入 Supabase Redirect URLs。
+  AUTH_REDIRECT_URL: '',
   SUPABASE_URL: 'https://vcxpgxnoyaosnwznpypq.supabase.co',
   SUPABASE_ANON_KEY: 'sb_publishable_6QhxjDxPZSxIRG4UIgJAOg_A5FZRsSp',
 };

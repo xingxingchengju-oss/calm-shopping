@@ -214,29 +214,61 @@
 
       <!-- 我 -->
       <section class="overlay me-view" id="me">
-        <div class="pad safe">
-          <div class="title"><h1>我和豚豚</h1></div>
-          <div class="mecard">
-            <div class="meav"></div>
-            <div><h3>Mia</h3><p>和豚豚一起住在河湾 · 第 12 天</p></div>
+        <div class="me-mist mist-a"></div><div class="me-mist mist-b"></div>
+        <div class="pad safe me-pad">
+          <div class="me-titlebar">
+            <div class="me-brand"><h1>我和豚豚</h1><i></i></div>
+            <button class="me-settings" id="meSettings" aria-label="账号与设置">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="3.25"/><path d="M12 2.75v2.1M12 19.15v2.1M2.75 12h2.1M19.15 12h2.1M5.46 5.46l1.49 1.49M17.05 17.05l1.49 1.49M18.54 5.46l-1.49 1.49M6.95 17.05l-1.49 1.49"/><circle cx="12" cy="12" r="7.15"/></svg>
+            </button>
           </div>
-          <div class="stat2">
-            <div class="statbox"><b>¥3,047</b><small>一共留住的</small></div>
-            <div class="statbox"><b>18</b><small>件漂远放手了</small></div>
-          </div>
-          <div class="melist">
-            <div class="mr">提醒时间 <span>每晚 23:30 ›</span></div>
-            <div class="mr">河湾主题 <span>晴日河 ›</span></div>
-            <div class="mr">豚豚的零食 <span>柚子 ›</span></div>
-            <div class="mr">安稳夜记录 <span>连续 4 夜 ›</span></div>
-            <div class="mr">数据与隐私 <span>本地优先 ›</span></div>
-          </div>
-          <div class="savecard" id="acctCard">
-            <div class="sc-info">
-              <b id="acctTitle">登录后才会保存</b>
-              <span id="acctSub">识别 / 报告免登录；保存进度需邮箱登录</span>
+
+          <button class="profile-card" id="profileCard" type="button">
+            <span class="profile-avatar-wrap"><img id="profileAvatar" src="assets/avatars/capybara.webp" alt="当前动物头像"/></span>
+            <span class="profile-copy"><b id="profileName">河湾旅人</b><small id="profileSubtitle">登录后留下名字与陪伴足迹</small></span>
+            <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+
+          <section class="today-river" aria-labelledby="todayRiverTitle">
+            <div class="river-reed reed-a"></div><div class="river-reed reed-b"></div>
+            <div class="today-copy">
+              <span class="today-kicker">TODAY · 河湾来信</span>
+              <h2 id="todayRiverTitle">今天的河湾</h2>
+              <p id="todayRiverText">先把想买的放进河里，陪自己慢一点。</p>
+              <button id="goDropBtn" class="river-cta" type="button">去河边放一件</button>
             </div>
-            <button class="sc-btn" id="acctBtn">登录</button>
+            <img class="today-capy" src="assets/capybara-peek.png" alt="安静待在水边的豚豚"/>
+            <div class="today-ripple rpa"></div><div class="today-ripple rpb"></div>
+          </section>
+
+          <div class="me-section-head"><h2>陪伴足迹</h2><span>来自真实记录</span></div>
+          <div class="footprint-card" id="footprintCard">
+            <div class="footprint-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5.5" width="16" height="14" rx="3"/><path d="M8 3.5v4M16 3.5v4M4 9.5h16"/></svg>
+              <b id="statDays">—</b><small>相伴天数</small>
+            </div>
+            <div class="footprint-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m4 11 8-6 8 6-8 3z"/><path d="m6.5 12 1 6 4.5-4 4.5 4 1-6"/></svg>
+              <b id="statTotal">—</b><small>冷静过</small>
+            </div>
+            <div class="footprint-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 14c4.5 0 5.5-7 14-7-1 8-5 12-11 12-2 0-3-2-3-5z"/><path d="M7 17c3-3 6-5 10-7"/></svg>
+              <b id="statLetGo">—</b><small>已放手</small>
+            </div>
+          </div>
+          <p class="footprint-note" id="footprintNote">登录后，豚豚会把每次认真考虑都收进足迹。</p>
+
+          <div class="me-section-head"><h2>我的河湾</h2></div>
+          <div class="me-shortcuts">
+            <button type="button" id="goFloatingBtn"><span class="shortcut-icon water-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3s6 6 6 10.5a6 6 0 1 1-12 0C6 9 12 3 12 3z"/></svg></span><b>漂流中</b><small id="floatingShortcutMeta">看看正在沉淀的</small></button>
+            <button type="button" id="goYardBtn"><span class="shortcut-icon yard-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.2 3.4 3.4 9.6a1.6 1.6 0 0 0-.6 1.25V19a1.6 1.6 0 0 0 1.6 1.6H9.3V15a.9.9 0 0 1 .9-.9h3.6a.9.9 0 0 1 .9.9v5.6h4.9A1.6 1.6 0 0 0 21.2 19v-8.15a1.6 1.6 0 0 0-.6-1.25l-7.8-6.2a1.3 1.3 0 0 0-1.6 0z"/></svg></span><b>小院</b><small>看看豚豚的家</small></button>
+            <button type="button" id="historyBtn"><span class="shortcut-icon book-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h10a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M8 16.5h10M9 8h5M9 11h4"/></svg></span><b>陪伴记录</b><small>回看每次决定</small></button>
+          </div>
+
+          <div class="me-account-card" id="acctCard">
+            <div class="me-account-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 18.5h10a4 4 0 0 0 .5-7.96A5.7 5.7 0 0 0 6.7 9.2 4.7 4.7 0 0 0 7 18.5z"/><path d="m9.5 13 2 2 3.5-4"/></svg></div>
+            <div class="sc-info"><b id="acctTitle">登录后同步陪伴记录</b><span id="acctSub">识别与报告免登录，足迹需要邮箱登录</span><small id="acctSync">未登录 · 不保存</small></div>
+            <button class="sc-btn" id="acctBtn" type="button">登录</button>
           </div>
         </div>
       </section>
@@ -286,23 +318,124 @@
         </div>
       </div>
 
-      <!-- 统一邮箱 OTP 登录（保存类动作拦截 / 「我」页登录共用） -->
+      <!-- 账号入口：邮箱验证码注册 / 密码或验证码登录 -->
       <div class="bindm" id="loginModal">
-        <div class="bc">
-          <h3 id="loginTitle">邮箱验证码登录</h3>
-          <p>新邮箱会自动注册，老邮箱直接登录。豚豚只用邮箱保存你的进度。</p>
+        <div class="bc auth-card" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+          <h3 id="loginTitle">欢迎回到河湾</h3>
+          <p id="loginDesc">使用密码或邮箱验证码登录；邮箱首次使用会自动创建账号。</p>
+          <div class="auth-tabs" id="authTabs">
+            <button class="on" id="authLoginTab" type="button">登录</button>
+            <button id="authRegisterTab" type="button">注册</button>
+          </div>
+          <div class="auth-methods" id="authMethods">
+            <button class="on" id="authPasswordMethod" type="button">密码登录</button>
+            <button id="authOtpMethod" type="button">验证码登录</button>
+          </div>
           <div id="loginStepEmail">
             <input class="qtext" id="loginEmail" type="email" inputmode="email" autocomplete="email" placeholder="你的邮箱" />
+          </div>
+          <div id="loginStepPassword">
+            <input class="qtext" id="loginPassword" type="password" autocomplete="current-password" maxlength="72" placeholder="登录密码" />
           </div>
           <div id="loginStepCode" class="lg-hide">
             <input class="qtext" id="loginCode" inputmode="numeric" autocomplete="one-time-code" placeholder="邮箱里的 6 位验证码" />
           </div>
+          <div class="auth-links">
+            <button id="authBack" class="lg-hide" type="button">返回</button>
+            <button id="authResend" class="lg-hide" type="button">重新发送</button>
+            <button id="authForgot" type="button">忘记密码？</button>
+          </div>
           <div class="bind-msg" id="loginMsg"></div>
           <div class="bind-acts">
             <button class="btn-ok alt lg-hide" id="loginSkip">仅完成本次·不保存</button>
-            <button class="btn-ok" id="loginPrimary">发送验证码</button>
+            <button class="btn-ok" id="loginPrimary">登录</button>
           </div>
-          <button class="login-close" id="loginClose">关闭</button>
+          <button class="login-close" id="loginClose" type="button">关闭</button>
+        </div>
+      </div>
+
+      <!-- 个人资料编辑 -->
+      <div class="sheetm" id="profileModal" aria-hidden="true">
+        <div class="bottom-sheet profile-sheet" role="dialog" aria-modal="true" aria-labelledby="profileEditTitle">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title"><div><h3 id="profileEditTitle">换个河湾身份</h3><p>挑一位动物伙伴，再留下你的名字。</p></div><button id="profileCancel" type="button" aria-label="关闭">×</button></div>
+          <label class="profile-name-label" for="profileNameInput">用户名 <span>1–16 个字符</span></label>
+          <input class="profile-name-input" id="profileNameInput" maxlength="16" autocomplete="nickname" placeholder="给自己取个名字"/>
+          <div class="avatar-grid" id="avatarGrid">
+            <button type="button" data-avatar="capybara" aria-label="水豚头像"><img src="assets/avatars/capybara.webp" alt="水豚"/></button>
+            <button type="button" data-avatar="otter" aria-label="海獭头像"><img src="assets/avatars/otter.webp" alt="海獭"/></button>
+            <button type="button" data-avatar="rabbit" aria-label="兔子头像"><img src="assets/avatars/rabbit.webp" alt="兔子"/></button>
+            <button type="button" data-avatar="bear" aria-label="小熊头像"><img src="assets/avatars/bear.webp" alt="小熊"/></button>
+            <button type="button" data-avatar="fox" aria-label="狐狸头像"><img src="assets/avatars/fox.webp" alt="狐狸"/></button>
+            <button type="button" data-avatar="duck" aria-label="小鸭头像"><img src="assets/avatars/duck.webp" alt="小鸭"/></button>
+          </div>
+          <div class="sheet-msg" id="profileMsg"></div>
+          <button class="sheet-primary" id="profileSave" type="button">保存我的资料</button>
+        </div>
+      </div>
+
+      <!-- 账号与设置 -->
+      <div class="sheetm" id="settingsModal" aria-hidden="true">
+        <div class="bottom-sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title"><div><h3 id="settingsTitle">账号与设置</h3><p>你的河湾记录只跟随当前邮箱。</p></div><button id="settingsClose" type="button" aria-label="关闭">×</button></div>
+          <div class="settings-row"><span>当前账号</span><b id="settingsEmail">尚未登录</b></div>
+          <div class="settings-row"><span>同步状态</span><b id="settingsSync">未登录 · 不保存</b></div>
+          <button class="settings-row settings-action-row" id="passwordSettingsBtn" type="button">
+            <span>登录密码</span><b id="passwordSettingsStatus">登录后可设置 ›</b>
+          </button>
+          <div class="settings-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 5 6v5c0 4.6 2.8 8 7 10 4.2-2 7-5.4 7-10V6z"/><path d="m9 12 2 2 4-4"/></svg><p><b>数据说明</b><br/>识别和报告可以免登录使用；头像、用户名与陪伴足迹登录后同步保存。</p></div>
+          <button class="sheet-primary" id="settingsAccountBtn" type="button">登录并同步</button>
+        </div>
+      </div>
+
+      <!-- 已登录用户设置 / 更改密码 -->
+      <div class="bindm" id="passwordModal">
+        <div class="bc password-card" role="dialog" aria-modal="true" aria-labelledby="passwordModalTitle">
+          <h3 id="passwordModalTitle">设置登录密码</h3>
+          <p id="passwordModalDesc">设置后，下次可以直接用邮箱和密码登录。</p>
+          <div id="currentPasswordWrap" class="lg-hide">
+            <input class="qtext" id="currentPasswordInput" type="password" autocomplete="current-password" maxlength="72" placeholder="当前密码" />
+            <button class="password-forgot-current" id="passwordForgotCurrent" type="button">忘记当前密码？发邮件重设</button>
+          </div>
+          <input class="qtext" id="newPasswordInput" type="password" autocomplete="new-password" maxlength="72" placeholder="新密码（至少 8 位，含字母和数字）" />
+          <input class="qtext" id="confirmPasswordInput" type="password" autocomplete="new-password" maxlength="72" placeholder="再次输入新密码" />
+          <div class="bind-msg" id="passwordMsg"></div>
+          <div class="bind-acts">
+            <button class="btn-ok alt" id="passwordCancel" type="button">取消</button>
+            <button class="btn-ok" id="passwordSave" type="button">保存密码</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 忘记密码邮件回跳后重设 -->
+      <div class="bindm" id="recoveryModal">
+        <div class="bc password-card" role="dialog" aria-modal="true" aria-labelledby="recoveryTitle">
+          <h3 id="recoveryTitle">重设登录密码</h3>
+          <p>邮箱验证已经通过，请设置一个新的登录密码。</p>
+          <input class="qtext" id="recoveryPassword" type="password" autocomplete="new-password" maxlength="72" placeholder="新密码（至少 8 位，含字母和数字）" />
+          <input class="qtext" id="recoveryConfirm" type="password" autocomplete="new-password" maxlength="72" placeholder="再次输入新密码" />
+          <div class="bind-msg" id="recoveryMsg"></div>
+          <button class="btn-ok auth-wide-button" id="recoverySave" type="button">完成重设</button>
+          <button class="login-close" id="recoveryClose" type="button">稍后再说</button>
+        </div>
+      </div>
+
+      <!-- 陪伴记录 -->
+      <div class="sheetm" id="historyModal" aria-hidden="true">
+        <div class="bottom-sheet history-sheet" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title"><div><h3 id="historyTitle">陪伴记录</h3><p>每一次认真停下来，都算数。</p></div><button id="historyClose" type="button" aria-label="关闭">×</button></div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+      </div>
+
+      <!-- 退出登录确认 -->
+      <div class="bindm confirmm" id="logoutModal">
+        <div class="bc">
+          <h3>要先离开河湾吗？</h3>
+          <p>退出后这台设备会回到访客状态，云端的头像和陪伴记录不会被删除。</p>
+          <div class="bind-acts"><button class="btn-ok alt" id="logoutCancel" type="button">再待一会</button><button class="btn-ok danger" id="logoutConfirm" type="button">退出登录</button></div>
         </div>
       </div>
 
@@ -328,5 +461,6 @@
 <script src="js/draft.js"></script>
 <script src="js/main.js"></script>
 <script src="js/account.js"></script>
+<script src="js/profile.js"></script>
 </body>
 </html>

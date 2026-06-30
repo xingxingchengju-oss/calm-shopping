@@ -25,6 +25,7 @@ function go(t){
   if(t==='home') track.style.transform='translateY(0)';
   else if(t==='soaking') track.style.transform='translateY('+DIVE+'px)';
   else if(t==='soil') track.style.transform='translateY('+(DIVE*2)+'px)';   // 继续下潜到河床地层
+  try{ window.dispatchEvent(new CustomEvent('ljg:view',{detail:{target:t}})); }catch(e){}
 }
 navBtns.forEach(b=>b.addEventListener('click',()=>go(b.dataset.target)));
 document.getElementById('diveBtn').addEventListener('click',()=>go('soaking'));
@@ -69,6 +70,10 @@ const dropBtn=document.getElementById('dropBtn');
 const dropInput=document.getElementById('drop');
 const shotBtn=document.getElementById('shotBtn');
 const shotInput=document.getElementById('shotInput');
+window.LJG_APP={
+  go,
+  focusDrop:function(){ go('home'); setTimeout(()=>{ if(dropInput){ dropInput.focus(); dropInput.scrollIntoView({block:'center',behavior:'smooth'}); } },180); }
+};
 
 let busy=false;
 function setBusy(b){ busy=b; if(dropBtn){dropBtn.disabled=b;dropBtn.style.opacity=b?'.6':'';} if(shotBtn) shotBtn.disabled=b; }
@@ -653,10 +658,6 @@ document.querySelectorAll('.btn-buy').forEach(btn=>{
   });
 });
 
-const meTips={'提醒时间':'demo · 每晚 23:30 轻轻提醒，别熬夜下单','河湾主题':'demo · 当前「晴日河」，更多主题攒河币解锁','豚豚的零食':'demo · 正在投喂柚子，豚豚很满足','安稳夜记录':'demo · 已连续 4 夜没有冲动消费','数据与隐私':'demo · 数据本地优先，不上传云端'};
-document.querySelectorAll('.melist .mr').forEach(r=>{
-  r.addEventListener('click',()=>{const k=(r.childNodes[0].textContent||'').trim();tip(meTips[k]||'demo · 暂未开放');});
-});
 document.querySelector('.streak').addEventListener('click',()=>tip('连续 4 晚没有冲动下单，豚豚很安心'));
 
 /* ---------- 启动：未登录可用(不持久化)，登录后才启用云端 ---------- */

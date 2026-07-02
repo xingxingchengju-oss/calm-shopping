@@ -69,6 +69,15 @@
   }
 
   // 残留会话清理 + 断网保活：先读本地 session（不联网）。正式用户网络失败保留登录态；仅匿名 / 明确失效才登出。
+  async function restoreUserFromSession() {
+    const c = client(); if (!c) { setUser(null); return null; }
+    let session = null;
+    try { const { data } = await c.auth.getSession(); session = data && data.session; } catch (e) { session = null; }
+    if (!session || !session.user || session.user.is_anonymous) { setUser(null); return null; }
+    setUser(session.user);
+    return _user;
+  }
+
   async function refreshUser() {
     const c = client(); if (!c) { setUser(null); return null; }
     let session = null;
@@ -182,7 +191,7 @@
   }
 
   window.LJG_AUTH = {
-    sb: client, refreshUser, isLoggedIn, currentUser, currentUserId, hasPassword,
+    sb: client, restoreUserFromSession, refreshUser, isLoggedIn, currentUser, currentUserId, hasPassword,
     sendEmailOtp, signInWithEmail, verifyEmailOtp, signInWithPassword,
     setPassword, sendPasswordReset, finishPasswordRecovery,
     updateProfile, signOut, getAccessToken, onChange, onProfileChange, onAuthEvent,

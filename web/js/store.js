@@ -170,6 +170,24 @@
   function resolvePoolItem(id, status) { if (!state.remote) return; const it = getPoolItem(id); state.pool = state.pool.filter(x => x.id !== id); mirrorPool(); if (it) pushDecision(it, status); }
   function recordDecision(item, status) { if (!state.remote) return; pushDecision(item, status); }
   function setCoins(n) { if (!state.remote) return; state.coins = n; write(coinsKey(), n); pushCoins(n); }
+  function applyRemoteCoins(n, silent) {
+    if (!state.userId || typeof n !== 'number' || !isFinite(n)) return false;
+    state.coins = n; write(coinsKey(), n);
+    if (!silent) { try { window.dispatchEvent(new CustomEvent('ljg:coins-updated', { detail: { coins: n } })); } catch (e) {} }
+    return true;
+  }
+  async function refreshCoins() {
+    const c = sb(); if (!state.remote || !c || !state.userId) return false;
+    const result = await c.from('user_stats').select('coins').eq('user_id', state.userId).maybeSingle();
+    if (result.error || !result.data || typeof result.data.coins !== 'number') return false;
+    return applyRemoteCoins(result.data.coins);
+  }
+  async function flushCoins() {
+    if (!state.remote) return false;
+    await flushQueue();
+    if (loadQueue().some(entry => entry.kind === 'coins')) return false;
+    return refreshCoins();
+  }
 
   // 写入并确认云端成功（超时/断网→保留队列+pending，返回 false 不误报成功）
   async function recordAndConfirm(item, status, timeoutMs) {
@@ -204,12 +222,17 @@
       const lc = read(coinsKey(), null); state.coins = (lc == null ? 0 : lc);
 
       let decOk = false, statsOk = false, cloudPool = [], cloudCoins = null;
+      const decisionsRequest = c.from('decisions').select('*').eq('user_id', uid).in('status', ['floating', 'riverbed']).order('created_at', { ascending: true });
+      const statsRequest = c.from('user_stats').select('coins').eq('user_id', uid).maybeSingle();
+      const initResults = await Promise.allSettled([decisionsRequest, statsRequest]);
       try {
-        const { data, error } = await c.from('decisions').select('*').eq('user_id', uid).in('status', ['floating', 'riverbed']).order('created_at', { ascending: true });
+        if (initResults[0].status === 'rejected') throw initResults[0].reason;
+        const { data, error } = initResults[0].value;
         if (error) throw error; cloudPool = (data || []).map(rowToItem); decOk = true;
       } catch (e) { console.warn('[LJG] 拉取 decisions 失败，保留本地', (e && e.message) || e); }
       try {
-        const { data, error } = await c.from('user_stats').select('coins').eq('user_id', uid).maybeSingle();
+        if (initResults[1].status === 'rejected') throw initResults[1].reason;
+        const { data, error } = initResults[1].value;
         if (error) throw error; if (data && typeof data.coins === 'number') cloudCoins = data.coins; statsOk = true;
       } catch (e) { console.warn('[LJG] 拉取 user_stats 失败，保留本地', (e && e.message) || e); }
 
@@ -243,6 +266,7 @@
     now, init, clear, resync,
     getPool, getPoolItem, getCoins, fetchCompanionOverview,
     addPoolItem, removePoolItem, resolvePoolItem, recordDecision, recordAndConfirm, setCoins,
+    applyRemoteCoins, refreshCoins, flushCoins,
     confirm: function (clientId, timeoutMs) { return confirmClientId(clientId, timeoutMs || 10000); },
     syncStatus: function () { return state.syncStatus; }, savePool: mirrorPool,
   };

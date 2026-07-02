@@ -49,3 +49,13 @@ pip install -r requirements.txt && uvicorn app.main:app --reload
 ```
 
 > 以上命令是规划中的目标用法，对应代码尚未编写。
+
+
+## 贴纸成就系统二期
+
+- 小院贴纸大厅进入 web/sticker-wall.html，场景编辑器为 web/sticker.html。
+- 游客只拥有默认贴纸；游客布局使用 calm_sticker_scene_layouts.v2.guest，旧 v1 布局不会迁移或删除。
+- 登录用户的贴纸所有权、成就统计和场景布局使用 Supabase；贴纸购买通过数据库 RPC 原子扣减河币并授予贴纸。
+- 数据库 migration 位于 supabase/migrations/20260630_sticker_phase2.sql，已在当前 web/js/config.js 对应的 Supabase 项目部署。
+- 已验证 5 张二期表、12 条贴纸定义、5 个 RLS 策略、全部 5 张表启用 RLS，以及 4 个公开 RPC。
+- 未使用真实用户数据执行购买破坏性测试；如需验证并发购买和跨账号行为，应创建专门测试账号。

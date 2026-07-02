@@ -639,3 +639,64 @@ body{display:grid;place-items:center;padding:24px 14px 44px;}
 .history-empty{height:100%;min-height:220px;display:grid;place-items:center;text-align:center;padding:30px;}.history-empty svg{width:58px;height:58px;color:#b9cdaa;}.history-empty h4{margin:10px 0 5px;font-size:15px;}.history-empty p{margin:0 0 14px;font-size:11px;line-height:1.6;color:var(--muted);}.history-empty button{border:0;border-radius:14px;padding:9px 15px;font-size:12px;font-weight:700;color:#fff;background:var(--water-2);cursor:pointer;}
 .btn-ok.danger{background:#e07a5f;box-shadow:0 5px 0 #c25e45;}.btn-ok.danger:active{box-shadow:0 2px 0 #c25e45;}
 @keyframes sheetUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+
+
+/* ============ 小院 · 贴纸收藏摘要 ============ */
+.sticker-hall{margin:0 0 24px;display:grid;gap:12px}
+.sticker-hall-title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:0 2px}
+.sticker-hall-title>div{min-width:0}.hall-kicker{font-size:9px;letter-spacing:.16em;font-weight:700;color:var(--water-3)}
+.sticker-hall-title h2{margin:2px 0 3px;font-size:23px;line-height:1.15;color:var(--ink)}
+.sticker-hall-title p{margin:0;font-size:10.5px;line-height:1.45;color:var(--muted)}
+.hall-all-link,.hall-shop-head>a{flex:none;text-decoration:none;font-size:10.5px;font-weight:700;color:var(--water-3)}
+.hall-all-link b{font-size:15px}
+.sticker-collection-card{border-radius:24px;padding:16px;background:linear-gradient(145deg,rgba(255,250,239,.98),rgba(244,230,200,.92));box-shadow:var(--clay),inset 0 0 0 1px rgba(224,202,160,.62),inset 0 2px 0 rgba(255,255,255,.72)}
+.collection-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.collection-head>div{display:flex;flex-direction:column;gap:2px}.collection-head span{font-size:9.5px;color:var(--muted)}.collection-head b{font-size:14px;color:var(--ink)}
+.collection-head em{font-style:normal;font-size:13px;font-weight:700;color:var(--water-3)}
+.collection-progress{height:7px;margin:9px 0 13px;border-radius:999px;overflow:hidden;background:rgba(79,176,168,.16)}
+.collection-progress i{display:block;width:8%;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--water-2),#76c8b6);transition:width .35s ease}
+.sticker-hall-preview{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.hall-preview-item{aspect-ratio:1;border-radius:17px;display:grid;place-items:center;overflow:hidden;background:#fffaf0;box-shadow:inset 0 0 0 1px rgba(224,202,160,.55)}
+.hall-preview-item img{width:82%;height:82%;object-fit:contain;filter:drop-shadow(0 3px 3px rgba(80,55,26,.16))}
+.hall-preview-item.locked{background:linear-gradient(145deg,#d9d6ca,#c8cbc4)}.hall-preview-item.locked b{font-size:22px;color:rgba(255,255,255,.82)}
+.collection-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:13px}.collection-foot>span{font-size:9.5px;color:var(--muted)}
+.hall-editor-link{border-radius:14px;padding:9px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;background:var(--water-2);box-shadow:0 3px 0 var(--water-3)}
+.hall-shop-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;padding:3px 2px 0}.hall-shop-head>div{display:flex;flex-direction:column}.hall-shop-head b{font-size:16px}.hall-shop-head span{font-size:9.5px;color:var(--muted)}
+.hall-shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hall-shop-card{min-width:0;border-radius:20px;padding:11px;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);background:rgba(255,250,239,.92);box-shadow:var(--clay),inset 0 0 0 1px rgba(224,202,160,.55)}
+.hall-shop-card img{width:54px;height:54px;flex:none;object-fit:contain}.hall-shop-card>div{min-width:0}.hall-shop-card b{display:block;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hall-shop-card span{display:block;margin-top:3px;font-size:9.5px;font-weight:700;color:var(--yuzu-d)}
+.hall-shop-card.owned span{color:var(--leaf-d)}
+.sticker-reward{position:absolute;inset:0;z-index:130;background:#173b3577;display:none;place-items:center;padding:28px}.sticker-reward.show{display:grid}.reward-card{text-align:center;width:100%;background:#fffaf0;border-radius:28px;padding:26px;box-shadow:0 20px 60px #183f3955}.reward-card>img{width:150px;height:150px;object-fit:contain}.reward-card p{color:#3c967c;margin:0}.reward-card h2{margin:5px}.reward-card>b{display:block;color:#b47b19;margin-bottom:16px}.reward-card button{border:0;border-radius:16px;background:#3f9278;color:#fff;padding:11px 20px;font-weight:700}.reward-spark{font-size:26px;color:#f4bd2d}
+
+/* ============ 贴纸解锁 · 弹簧浮动动效 ============ */
+.sticker-reward{
+  display:grid;visibility:hidden;opacity:0;pointer-events:none;
+  background:rgba(34,62,53,.48);backdrop-filter:blur(5px);
+  transition:opacity .18s ease,visibility 0s linear .18s;
+}
+.sticker-reward.show{
+  visibility:visible;opacity:1;pointer-events:auto;
+  transition:opacity .18s ease;
+}
+.sticker-reward.closing{visibility:visible;opacity:0;pointer-events:none}
+.sticker-reward .reward-card{
+  position:relative;overflow:visible;transform-origin:50% 70%;
+  border:1px solid rgba(224,202,160,.7);
+}
+.sticker-reward.show .reward-card{animation:stickerCardSpring .65s cubic-bezier(.2,.9,.25,1.18) both}
+.sticker-reward.show .reward-card>img{animation:stickerPrizeFloat .9s .18s cubic-bezier(.2,.75,.35,1) both}
+.sticker-reward.show .reward-spark{display:inline-block;animation:stickerSpark .72s .12s ease-out both}
+.reward-confetti{position:absolute;inset:22% 18%;pointer-events:none}
+.reward-confetti i{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--yuzu);opacity:0}
+.reward-confetti i:nth-child(1){left:8%;top:46%;background:#ef8b64}.reward-confetti i:nth-child(2){right:4%;top:36%;background:#4fb0a8}
+.reward-confetti i:nth-child(3){left:23%;top:5%}.reward-confetti i:nth-child(4){right:22%;top:8%;background:#78b86a}
+.sticker-reward.show .reward-confetti i{animation:stickerDot .68s .2s ease-out both}
+.sticker-reward.show .reward-confetti i:nth-child(2){animation-delay:.26s}.sticker-reward.show .reward-confetti i:nth-child(3){animation-delay:.31s}.sticker-reward.show .reward-confetti i:nth-child(4){animation-delay:.36s}
+@keyframes stickerCardSpring{0%{opacity:0;transform:translateY(34px) scale(.78)}55%{opacity:1;transform:translateY(-8px) scale(1.045)}76%{transform:translateY(3px) scale(.985)}100%{opacity:1;transform:none}}
+@keyframes stickerPrizeFloat{0%{opacity:0;transform:translateY(12px) rotate(-7deg) scale(.82)}48%{opacity:1;transform:translateY(-5px) rotate(4deg) scale(1.04)}72%{transform:translateY(2px) rotate(-2deg) scale(.99)}100%{opacity:1;transform:none}}
+@keyframes stickerSpark{0%{opacity:0;transform:scale(.3) rotate(-25deg)}65%{opacity:1;transform:scale(1.28) rotate(8deg)}100%{opacity:1;transform:none}}
+@keyframes stickerDot{0%{opacity:0;transform:translateY(15px) scale(.4)}50%{opacity:1}100%{opacity:0;transform:translateY(-35px) scale(1.1)}}
+@media(prefers-reduced-motion:reduce){
+  .sticker-reward,.sticker-reward.show,.sticker-reward.closing{transition:none}
+  .sticker-reward.show .reward-card,.sticker-reward.show .reward-card>img,.sticker-reward.show .reward-spark,.sticker-reward.show .reward-confetti i{animation:none}
+}

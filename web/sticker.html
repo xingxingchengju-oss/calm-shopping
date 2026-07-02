@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>河湾贴纸墙 · 冷静购</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/stickers.css" />
+</head>
+<body>
+  <div class="sticker-stage">
+    <div class="stage-caption">水豚陪伴 · 河湾贴纸墙</div>
+    <div class="sticker-device">
+      <div class="sticker-screen">
+        <div class="statusbar" aria-hidden="true"><span>09:24</span><span>5G ▰</span></div>
+        <header class="sticker-header">
+          <a class="back-link" href="sticker-wall.html" aria-label="返回小院">‹</a>
+          <div>
+            <h1>河湾贴纸墙</h1>
+            <p><span id="ownerLabel">游客体验</span> · 只显示已拥有贴纸</p>
+          </div>
+          <button id="clearSceneBtn" class="clear-scene" type="button">清空</button>
+        </header>
+
+        <nav id="sceneTabs" class="scene-tabs" aria-label="切换贴纸场景"></nav>
+
+        <main class="sticker-main">
+          <section class="canvas-wrap" aria-label="贴纸场景编辑区">
+            <div id="sceneCanvas" class="scene-canvas" tabindex="0">
+              <div id="canvasEmpty" class="canvas-empty">从下方挑一张贴纸<br />放进河湾故事里吧</div>
+            </div>
+          </section>
+
+          <div class="editor-tools" aria-label="贴纸编辑工具">
+            <button id="undoBtn" type="button"><b>↶</b><span>撤销</span></button>
+            <button id="redoBtn" type="button"><b>↷</b><span>重做</span></button>
+            <button id="zoomInBtn" type="button"><b>＋</b><span>放大</span></button>
+            <button id="zoomOutBtn" type="button"><b>－</b><span>缩小</span></button>
+            <button id="rotateLeftBtn" type="button"><b>↺</b><span>左旋</span></button>
+            <button id="rotateRightBtn" type="button"><b>↻</b><span>右旋</span></button>
+            <button id="bringFrontBtn" type="button"><b>⇧</b><span>置顶</span></button>
+            <button id="deleteStickerBtn" class="danger" type="button"><b>⌫</b><span>删除</span></button>
+          </div>
+
+          <section class="sticker-tray" aria-labelledby="trayTitle">
+            <div class="tray-heading">
+              <div><h2 id="trayTitle">我的贴纸</h2><p>同一张可以重复摆放</p></div>
+              <span id="sceneItemCount">0 枚</span>
+            </div>
+            <div id="stickerTrayList" class="sticker-tray-list"></div>
+          </section>
+        </main>
+        <div class="sticker-reward" id="stickerReward" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="stickerRewardTitle">
+          <div class="reward-confetti" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <div class="reward-card">
+            <span class="reward-spark" aria-hidden="true">✦</span>
+            <p data-reward-kicker>恭喜获得新贴纸</p>
+            <img data-reward-image alt="">
+            <h2 id="stickerRewardTitle" data-reward-name></h2>
+            <b data-reward-rarity></b>
+            <button type="button" data-reward-close>收进贴纸墙</button>
+          </div>
+        </div>        <div id="storageToast" class="sticker-toast" role="status" aria-live="polite"></div>
+        <div id="clearConfirm" class="confirm-overlay" aria-hidden="true">
+          <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+            <div class="confirm-icon">🫧</div>
+            <h2 id="confirmTitle">清空这个场景？</h2>
+            <p>贴纸会先收回贴纸库。清空后仍可以撤销。</p>
+            <div><button id="cancelClearBtn" type="button">再想想</button><button id="confirmClearBtn" type="button">确认清空</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/sticker-catalog.js"></script>
+  <script src="js/sticker-model.js"></script>
+  <script src="js/sticker-achievements.js"></script>
+  <script src="js/sticker-store.js"></script>
+  <script src="js/sticker-reward.js"></script>
+  <script src="js/sticker-editor.js"></script>
+</body>
+</html>

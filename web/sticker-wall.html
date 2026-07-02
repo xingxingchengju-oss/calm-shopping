@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>河湾贴纸墙 · 冷静购</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/sticker-wall.css">
+</head>
+<body>
+<div class="wall-stage">
+  <div class="wall-device">
+    <div class="wall-screen">
+      <div class="statusbar" aria-hidden="true"><span>09:24</span><span>5G ▰</span></div>
+      <header class="wall-head">
+        <a href="index.html#yard" aria-label="返回小院">‹</a>
+        <div><h1>河湾贴纸墙</h1><p id="wallOwner">游客体验 · 仅默认贴纸</p></div>
+        <div class="wall-coins coinchip" aria-label="当前河币"><svg viewBox="0 0 58 58"><circle cx="29" cy="29" r="27" fill="#f3b73a"/><circle cx="29" cy="29" r="27" fill="none" stroke="#c8861a" stroke-width="3"/><circle cx="29" cy="29" r="19" fill="#ffd95b"/><circle cx="23" cy="23" r="5" fill="#ffe79a"/><path d="M29 12c2-3 6-3 7-1-3 0-5 1-7 1z" fill="#74b86a"/></svg><b id="wallCoins">0</b><span>河币</span></div>
+      </header>
+
+      <section class="wall-summary">
+        <div><span>我的收藏</span><strong id="wallCount">1 / 12</strong><i aria-hidden="true"><em id="wallProgress"></em></i></div>
+        <a href="sticker.html">去布置贴纸 <b>›</b></a>
+      </section>
+
+      <nav class="wall-filters" id="wallFilters" aria-label="贴纸筛选">
+        <button class="active" data-filter="all">全部</button>
+        <button data-filter="achievement">成就</button>
+        <button data-filter="shop">商店</button>
+        <button data-filter="locked">未获得</button>
+        <button data-filter="new">新获得</button>
+      </nav>
+
+      <main><div class="wall-grid" id="wallGrid"></div></main>
+      <div class="wall-toast" id="wallToast" role="status" aria-live="polite"></div>
+
+      <div class="wall-detail" id="wallDetail" aria-hidden="true">
+        <div class="detail-card" role="dialog" aria-modal="true" aria-labelledby="wallDetailName">
+          <button class="detail-close" data-detail-close aria-label="关闭">×</button>
+          <img data-detail-image alt="">
+          <span data-detail-source></span>
+          <h2 id="wallDetailName" data-detail-name></h2>
+          <p data-detail-description></p>
+          <small data-detail-rule></small>
+          <a href="sticker.html">去场景里布置</a>
+        </div>
+      </div>
+
+      <div class="purchase-sheet" id="purchaseSheet" aria-hidden="true">
+        <div class="purchase-panel" role="dialog" aria-modal="true" aria-labelledby="purchaseTitle" tabindex="-1">
+          <div class="sheet-handle" aria-hidden="true"></div>
+          <button class="purchase-close" type="button" data-purchase-close aria-label="关闭">×</button>
+          <div class="purchase-preview"><img data-purchase-image alt=""></div>
+          <span class="purchase-kicker">贴纸商店</span>
+          <h2 id="purchaseTitle" data-purchase-name></h2>
+          <p data-purchase-description></p>
+          <div class="purchase-balance">
+            <div><span>当前河币</span><b data-purchase-current>0</b></div>
+            <i>−</i>
+            <div><span>兑换价格</span><b data-purchase-price>0</b></div>
+            <i>=</i>
+            <div><span>兑换后</span><b data-purchase-after>0</b></div>
+          </div>
+          <p class="purchase-message" data-purchase-message aria-live="polite"></p>
+          <div class="purchase-actions">
+            <button type="button" class="purchase-cancel" data-purchase-cancel>再想想</button>
+            <button type="button" class="purchase-confirm" data-purchase-confirm>确认兑换</button>
+          </div>
+        </div>
+      <div class="sticker-reward" id="stickerReward" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="stickerRewardTitle">
+        <div class="reward-confetti" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="reward-card">
+          <span class="reward-spark" aria-hidden="true">✦</span>
+          <p data-reward-kicker>恭喜获得新贴纸</p>
+          <img data-reward-image alt="">
+          <h2 id="stickerRewardTitle" data-reward-name></h2>
+          <b data-reward-rarity></b>
+          <button type="button" data-reward-close>收进贴纸墙</button>
+        </div>
+      </div>      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/store.js"></script>
+<script src="js/sticker-catalog.js"></script>
+<script src="js/sticker-achievements.js"></script>
+<script src="js/sticker-reward.js"></script>
+<script src="js/sticker-wall.js"></script>
+</body>
+</html>

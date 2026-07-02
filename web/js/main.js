@@ -17,7 +17,12 @@ const track=document.getElementById('track');
 const yard=document.getElementById('yard'), me=document.getElementById('me');
 const navBtns=document.querySelectorAll('.nav button');
 const DIVE=-760;
+let currentView='home';
+function signalRewardContext(){
+  try{ window.dispatchEvent(new CustomEvent('ljg:reward-context-changed')); }catch(e){}
+}
 function go(t){
+  currentView=t;
   const navT=(t==='soil')?'soaking':t;   // 河床是「漂着」的更深一层，导航高亮仍归漂着
   navBtns.forEach(b=>b.classList.toggle('active',b.dataset.target===navT));
   yard.classList.toggle('on',t==='yard');
@@ -28,6 +33,8 @@ function go(t){
   try{ window.dispatchEvent(new CustomEvent('ljg:view',{detail:{target:t}})); }catch(e){}
 }
 navBtns.forEach(b=>b.addEventListener('click',()=>go(b.dataset.target)));
+if(location.hash==='#yard')go('yard');
+window.addEventListener('hashchange',()=>{if(location.hash==='#yard')go('yard');});
 document.getElementById('diveBtn').addEventListener('click',()=>go('soaking'));
 document.getElementById('upBtn').addEventListener('click',()=>go('home'));
 document.getElementById('upBtn2').addEventListener('click',()=>go('home'));
@@ -42,13 +49,28 @@ document.querySelector('.riverbed').addEventListener('click',()=>{
 /* ---------- 轻提示 ---------- */
 const toast=document.getElementById('toast');let tt;
 function tip(t){toast.textContent=t;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),2000);}
-function backdropClose(el){el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('show');});}
+function backdropClose(el){el.addEventListener('click',e=>{if(e.target===el){el.classList.remove('show');signalRewardContext();}});}
 
 /* ---------- 河币：本地账本（持久化） ---------- */
 const coinEl=document.getElementById('coin');
 let coins=LJG_STORE.getCoins(parseInt(coinEl.textContent,10)||0);
 coinEl.textContent=coins;
 function setCoins(n){coins=n;coinEl.textContent=n;LJG_STORE.setCoins(n);}
+function recordStickerEvent(type,id,metadata){
+  if(!window.LJG_STICKER_ACHIEVEMENTS) return Promise.resolve(null);
+  return LJG_STICKER_ACHIEVEMENTS.recordEvent(type,id,metadata||{}).catch(error=>{console.warn('[LJG] 贴纸事件已暂存',type,error&&error.message);return null;});
+}
+function recordReportAchievement(){
+  if(!current) return Promise.resolve(null);
+  if(!current.sticker_report_id) current.sticker_report_id='report:'+(current.session_id||('local_'+Date.now().toString(36)));
+  return recordStickerEvent('report_generated',current.sticker_report_id,{has_pricing:!!current.pricing});
+}
+async function emitDecisionAchievements(item,key){
+  await recordStickerEvent('decision_saved','decision:'+item.id+':'+key,{decision:key});
+  if(key==='keep_floating') await recordStickerEvent('item_added_to_pool','pool:'+item.id,{});
+  if(key==='let_go') await recordStickerEvent('purchase_cancelled','cancel:'+item.id,{});
+}
+
 
 /* ---------- 豚豚：眨眼 + 点一下说话 ---------- */
 const capy=document.getElementById('capy');
@@ -166,6 +188,13 @@ const qchat=document.getElementById('qchat');
 const qinput=document.getElementById('qinput');
 const qprog=document.getElementById('qprog');
 backdropClose(qpanel);
+if(window.LJG_STICKER_REWARD && LJG_STICKER_REWARD.setPresentationGate){
+  LJG_STICKER_REWARD.setPresentationGate(()=>{
+    if(qpanel.classList.contains('show')) return false;
+    if(document.getElementById('reward') && document.getElementById('reward').classList.contains('show')) return false;
+    return !document.querySelector('.bindm.show,.sheetm.show,.peek.show');
+  });
+}
 
 function scrollChat(){ qchat.scrollTop=qchat.scrollHeight; }
 function pushCapy(text, sub){
@@ -295,6 +324,7 @@ async function finishChat(){
     return;
   }
   current.report=rep;
+  recordReportAchievement();
   if(window.LJG_DRAFT) LJG_DRAFT.saveDraft(current);   // 报告进草稿：刷新可续看、登录后用于写库
   renderReport(rep);
 }
@@ -337,7 +367,12 @@ function onAction(key){
 
 /* 池中项（已登录）再决策 —— 原逻辑 */
 function onActionPool(key){
-  if(key==='buy'){ LJG_STORE.resolvePoolItem(current.poolId,'bought'); renderPool(); closeChat(); tip('好，这个买得安心～'); return; }
+  if(key==='buy'){
+    const it=LJG_STORE.getPoolItem(current.poolId); if(!it){closeChat();return;}
+    LJG_STORE.resolvePoolItem(current.poolId,'bought'); renderPool(); closeChat(); tip('好，这个买得安心～');
+    LJG_STORE.confirm(it.id).then(ok=>{if(ok)emitDecisionAchievements(it,'buy');});
+    return;
+  }
   if(key==='keep_floating'){
     const it=LJG_STORE.getPoolItem(current.poolId);
     closeChat(); tip(it&&depthFrac(it)>=1?'好，让它继续在河床躺着～':'好，让它再漂一会儿～'); return;
@@ -347,7 +382,10 @@ function onActionPool(key){
     const id=it.id, price=it.price, deliberated=!!(depthFrac(it)>=1);
     LJG_STORE.resolvePoolItem(current.poolId,'let_go'); renderPool(); closeChat();   // 移出池 + 升级为 let_go
     const amt=coinAmount(price)+(deliberated?20:0);
-    LJG_STORE.confirm(id).then(ok=>{ if(ok) awaitReward(id, amt, deliberated); else tip('已记下，网络好了会自动同步～'); });   // 确认后再发奖励，防重复
+    LJG_STORE.confirm(id).then(ok=>{
+      if(ok){ awaitReward(id, amt, deliberated); emitDecisionAchievements(it,'let_go'); }
+      else tip('已记下，网络好了会自动同步～');
+    });   // 确认后再发奖励，防重复
     return;
   }
 }
@@ -364,6 +402,7 @@ function terminalAction(key){
 /* 持久化写入 + 云端确认；确认成功才清 pending/draft（失败保留待重试）。
    let_go 走「先确认 decision，再进入 awaiting_reward 弹奖励」，防超时续跑重复发币。 */
 async function doPersist(key, item, price){
+  await recordReportAchievement();
   if(key==='let_go'){ await persistLetGo(item, price, false); coins=LJG_STORE.getCoins(coins); coinEl.textContent=coins; return; }
   let p;
   if(key==='keep_floating'){
@@ -374,7 +413,7 @@ async function doPersist(key, item, price){
     p=LJG_STORE.recordAndConfirm(item,'bought');
   }
   coins=LJG_STORE.getCoins(coins); coinEl.textContent=coins;
-  const ok=await p; onPersistDone(ok); return ok;
+  const ok=await p; if(ok) await emitDecisionAchievements(item,key); onPersistDone(ok); return ok;
 }
 function onPersistDone(ok){
   if(ok){ if(window.LJG_DRAFT){ LJG_DRAFT.clearPending(); LJG_DRAFT.clearDraft(); } }
@@ -422,7 +461,7 @@ function reEvaluate(id){
   startCast(it.input);                    // 内部 go('home') + 走完整流程
 }
 
-function closeChat(){ qpanel.classList.remove('show'); current=null; }
+function closeChat(){ qpanel.classList.remove('show'); current=null; signalRewardContext(); }
 
 /* 从当前会话构造一条「完整决策档案」；client_id 在 current 上生成一次并复用（幂等、供登录续跑） */
 function buildRecord(){
@@ -453,6 +492,7 @@ async function persistLetGo(item, price, deliberated){
     if(window.LJG_DRAFT) LJG_DRAFT.clearPending();                 // 决策已落库 → 清待办，续跑不会重复
     const amt=coinAmount(price!=null?price:item.price)+(deliberated?20:0);
     awaitReward(item.id, amt, deliberated);
+    await emitDecisionAchievements(item,'let_go');
   } else {
     tip('已记下，网络好了会自动同步～');                            // 未确认 → 保留 pending，重试时再发奖励
   }
@@ -483,10 +523,12 @@ rewardOk.addEventListener('click',()=>{
   const uid=(window.LJG_AUTH && LJG_AUTH.currentUserId)?LJG_AUTH.currentUserId():null;
   if(window.LJG_DRAFT){ LJG_DRAFT.clearReward(); LJG_DRAFT.clearDraft(); }    // 先清 reward/draft，再发币
   pendingCoins=0; pendingDeliberated=false;
-  if(!uid || !r || r.uid!==uid || typeof r.amount!=='number') return;        // 奖励不属于当前用户 → 不发币
-  setCoins(coins+r.amount);                                                  // 失败由 coins 队列重试
-  tip((r.deliberated?'真棒，想通了 · +':'+')+r.amount+' 河币 · 收进小院啦');
-  setTimeout(()=>go('yard'),420);
+  if(uid && r && r.uid===uid && typeof r.amount==='number'){
+    setCoins(coins+r.amount);                                                // 失败由 coins 队列重试
+    tip((r.deliberated?'真棒，想通了 · +':'+')+r.amount+' 河币');
+  }
+  go('home');
+  signalRewardContext();
 });
 
 /* ============================================================
@@ -611,53 +653,7 @@ function openPoolItem(id){
   renderReport(it.report||{}, sunk?'soil':'float');
 }
 
-/* ============================================================
-   小院图鉴 / 商店 / 我（与后端无关，沿用原型）
-   ============================================================ */
-const peek=document.getElementById('peek'); backdropClose(peek);
-document.getElementById('peekOk').addEventListener('click',()=>peek.classList.remove('show'));
-function openPeek(svg,name,desc){
-  document.getElementById('peekPic').innerHTML=svg;
-  document.getElementById('peekTag').textContent='图鉴 · 已收集';
-  document.getElementById('peekTitle').textContent=name;
-  document.getElementById('peekDesc').textContent=desc;
-  peek.classList.add('show');
-}
-function bindDex(){
-  document.querySelectorAll('.dex .cell').forEach(c=>{
-    c.onclick=()=>{
-      if(c.classList.contains('locked')){tip('还没解锁～放手攒河币，邀请新伙伴来住');return;}
-      openPeek(c.querySelector('svg').outerHTML,c.dataset.name||'',c.dataset.desc||'');
-    };
-  });
-}
-bindDex();
-
-const dexCount=document.getElementById('dexCount');let unlocked=3;
-const duckSVG='<svg viewBox="0 0 48 48"><ellipse cx="21" cy="32" rx="15" ry="11" fill="#ffd95b"/><path d="M7 32a14 10 0 0 0 28 0z" fill="#f3c12f" opacity=".55"/><path d="M8 28q-5 0-6 3.4 3.4 1.2 6.6-1z" fill="#ffe27a"/><path d="M15 30q6.5-5.2 13.5-1.4-4.6 5-13.5 1.4z" fill="#f7c948"/><circle cx="33" cy="18" r="9.2" fill="#ffe27a"/><path d="M32 9.2q.8-3 3.2-2.2-1.2 1.6-.6 3.2z" fill="#f7c948"/><circle cx="34.6" cy="16.4" r="2.1" fill="#43341f"/><circle cx="35.4" cy="15.6" r=".75" fill="#fff"/><path d="M41 17.6q6 -.6 6 2.3 0 2.7-6 1.6z" fill="#f0892b"/><path d="M41.4 20q2.8 .3 5.2 .1" stroke="#d2731f" stroke-width=".9" fill="none"/></svg>';
-document.querySelectorAll('.btn-buy').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    if(btn.disabled) return;
-    const price=parseInt(btn.dataset.price,10);
-    if(coins<price){tip('河币还差 '+(price-coins)+' 枚 · 多放手几件再来');return;}
-    setCoins(coins-price);
-    btn.textContent='已布置 ✓';btn.disabled=true;btn.style.opacity='.5';btn.style.boxShadow='none';
-    if(btn.dataset.unlock==='duck'){
-      const lock=document.querySelector('.dex .cell.locked');
-      if(lock){
-        lock.classList.remove('locked');
-        lock.dataset.name='小黄鸭';
-        lock.dataset.desc='被你从河里捞起来的小黄鸭，决定住进小院，给河湾添点热闹。';
-        lock.innerHTML=duckSVG+'<span>小黄鸭</span>';
-        unlocked++;dexCount.textContent=unlocked+' / 9 已解锁';bindDex();
-      }
-      tip('小黄鸭住进来啦 · 图鉴 +1');
-    }else{
-      tip('「'+btn.dataset.item+'」已布置到小院 🌿');
-    }
-  });
-});
-
+/* ---------- 小院贴纸摘要由 sticker-hall.js 负责 ---------- */
 document.querySelector('.streak').addEventListener('click',()=>tip('连续 4 晚没有冲动下单，豚豚很安心'));
 
 /* ---------- 启动：未登录可用(不持久化)，登录后才启用云端 ---------- */
@@ -677,11 +673,23 @@ async function onAuthChanged(){
   const loggedIn=!!(window.LJG_AUTH && LJG_AUTH.isLoggedIn());
   if(loggedIn){
     try{ if(window.LJG_STORE) await LJG_STORE.init(LJG_AUTH.currentUserId()); }catch(e){ console.warn('[LJG] init 失败',e); }
+    try{
+      if(window.LJG_STICKER_ACHIEVEMENTS){
+        const stickerState=await LJG_STICKER_ACHIEVEMENTS.init(LJG_AUTH.currentUserId());
+        if(window.LJG_STICKER_STORE) await LJG_STICKER_STORE.initOwner(LJG_AUTH.currentUserId(),stickerState.owned_ids);
+        await recordStickerEvent('daily_visit',new Date().toISOString().slice(0,10),{});
+        try{window.dispatchEvent(new CustomEvent('ljg:layout-updated'));}catch(e){}
+      }
+    }catch(e){console.warn('[LJG] 贴纸状态初始化失败',e);}
     coins=LJG_STORE.getCoins(0); coinEl.textContent=coins; renderPool();
     await resumePending();
     maybeShowOwedReward();   // 刷新/登录后有待领奖励 → 展示一次（不重跑 let_go）
   } else {
     try{ if(window.LJG_STORE) LJG_STORE.clear(); }catch(e){}
+    try{
+      if(window.LJG_STICKER_ACHIEVEMENTS) await LJG_STICKER_ACHIEVEMENTS.init(null);
+      if(window.LJG_STICKER_STORE) await LJG_STICKER_STORE.initOwner(null,['sticker_begin_think']);
+    }catch(e){}
     if(window.LJG_DRAFT){ LJG_DRAFT.clearPending(); LJG_DRAFT.clearReward(); }   // 切号清待办/待领奖励，防串
     coins=LJG_STORE.getCoins(0); coinEl.textContent=coins; renderPool();
   }
@@ -697,3 +705,5 @@ function restoreDraftReport(){
   pushCapy('上次还没决定的「'+((d.product&&d.product.name)||'它')+'」，报告先给你看回～');
   renderReport(d.report||{}, 'fresh');
 }
+
+window.addEventListener('ljg:coins-updated',event=>{const n=event.detail&&event.detail.coins;if(typeof n==='number'){coins=n;coinEl.textContent=n;if(LJG_STORE.applyRemoteCoins)LJG_STORE.applyRemoteCoins(n,true);}});

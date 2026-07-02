@@ -172,43 +172,27 @@
             <b id="coin">0</b> 河币
             </div>
           </div>
-          <div class="subhead">收集图鉴 <small id="dexCount">3 / 9 已解锁</small></div>
-          <div class="dex">
-            <div class="cell" data-name="豚豚" data-desc="住在河湾的水豚，你的搭子。它替你看着那些漂着的冲动，等你慢慢想清楚。">
-              <svg viewBox="0 0 50 50"><ellipse cx="10.5" cy="20" rx="4" ry="4.3" fill="#a8855e"/><ellipse cx="39.5" cy="20" rx="4" ry="4.3" fill="#a8855e"/><circle cx="10.8" cy="20" r="1.7" fill="#8c6f4d"/><circle cx="39.2" cy="20" r="1.7" fill="#8c6f4d"/><rect x="8.5" y="13" width="33" height="31" rx="13" fill="#c8a982"/><ellipse cx="25" cy="36.5" rx="12" ry="8" fill="#e6cfa5"/><circle cx="18" cy="24.5" r="2.7" fill="#43341f"/><circle cx="32" cy="24.5" r="2.7" fill="#43341f"/><circle cx="18.9" cy="23.6" r=".95" fill="#fff"/><circle cx="32.9" cy="23.6" r=".95" fill="#fff"/><ellipse cx="20.6" cy="34.8" rx="1.7" ry="2.1" fill="#43341f"/><ellipse cx="29.4" cy="34.8" rx="1.7" ry="2.1" fill="#43341f"/><path d="M22.2 40q2.8 2.1 5.6 0" stroke="#7a5f3e" stroke-width="1.3" fill="none" stroke-linecap="round"/><ellipse cx="25" cy="8.8" rx="4.8" ry="4.4" fill="#f7c948"/><path d="M24.6 4.8q1.3-2.4 3.8-1.3-1.5 1-1.1 2.5z" fill="#74b86a"/></svg>
-              <span>豚豚</span>
+          <section class="sticker-hall" id="stickerHall" aria-labelledby="stickerHallTitle">
+            <div class="sticker-hall-title">
+              <div><span class="hall-kicker">冷静成就</span><h2 id="stickerHallTitle">河湾贴纸墙</h2><p>把每一次认真决定，收进你的河湾故事。</p></div>
+              <a class="hall-all-link" href="sticker-wall.html">查看全部 <b>›</b></a>
             </div>
-            <div class="cell" data-name="柚子" data-desc="豚豚最爱的零食。每放手一件冲动，就会多攒几颗柚子。">
-              <svg viewBox="0 0 50 50"><circle cx="25" cy="28" r="15" fill="#f7c948"/><circle cx="20" cy="23" r="5" fill="#ffe79a"/><path d="M25 12c2-4 7-4 9-1-4 0-6 1-9 1z" fill="#74b86a"/></svg>
-              <span>柚子</span>
+            <div class="sticker-collection-card">
+              <div class="collection-head"><div><span>我的收藏</span><b id="stickerHallCount">1 / 12 已收集</b></div><em id="stickerHallPercent">8%</em></div>
+              <div class="collection-progress" aria-hidden="true"><i id="stickerHallProgress"></i></div>
+              <div class="sticker-hall-preview" id="stickerHallPreview" aria-label="已获得和未获得贴纸预览"></div>
+              <div class="collection-foot"><span id="stickerPlacedCount">等你来布置</span><a class="hall-editor-link" href="sticker.html">去布置贴纸</a></div>
             </div>
-            <div class="cell" data-name="纸灯笼" data-desc="傍晚会自己亮起来的纸灯笼，给河湾小院添一抹暖光。">
-              <svg viewBox="0 0 50 50"><rect x="21" y="5" width="8" height="6" rx="2" fill="#8a5f30"/><rect x="14" y="10" width="22" height="30" rx="10" fill="#f7c948"/><rect x="12" y="20" width="26" height="3.5" rx="1.5" fill="#e09a1c"/><rect x="12" y="28" width="26" height="3.5" rx="1.5" fill="#e09a1c"/></svg>
-              <span>纸灯笼</span>
+            <div class="hall-shop-head"><div><b>贴纸商店</b><span>用河币收藏喜欢的贴纸</span></div><a href="sticker-wall.html?filter=shop">查看全部</a></div>
+            <div class="hall-shop-grid">
+              <a class="hall-shop-card" data-hall-sticker="sticker_wait_more" href="sticker-wall.html?filter=shop">
+                <img src="assets/stickers/wait-more.png" alt="等等再说"><div><b>等等再说</b><span data-hall-price>50 河币</span></div>
+              </a>
+              <a class="hall-shop-card" data-hall-sticker="sticker_today_safe" href="sticker-wall.html?filter=shop">
+                <img src="assets/stickers/today-safe.png" alt="今日没破防"><div><b>今日没破防</b><span data-hall-price>100 河币</span></div>
+              </a>
             </div>
-            <div class="cell locked"><div class="q">？</div><span>未解锁</span></div>
-            <div class="cell locked"><div class="q">？</div><span>未解锁</span></div>
-            <div class="cell locked"><div class="q">？</div><span>未解锁</span></div>
-            <div class="cell locked"><div class="q">？</div><span>未解锁</span></div>
-            <div class="cell locked"><div class="q">？</div><span>未解锁</span></div>
-            <div class="cell locked"><div class="q">？</div><span>未解锁</span></div>
-          </div>
-          <div class="subhead">用河币装点小院 </div>
-          <div class="shopitem">
-            <svg viewBox="0 0 48 48"><path d="M16 26h16l-2 14H18z" fill="#c8a982"/><ellipse cx="18" cy="18" rx="6" ry="10" fill="#79b85f"/><ellipse cx="30" cy="18" rx="6" ry="10" fill="#8ec96e"/><path d="M24 28v-10" stroke="#4f9a55" stroke-width="2"/></svg>
-            <div class="sm"><h4>河边小盆栽</h4><p>给河湾添点绿意</p></div>
-            <button class="btn-buy" data-price="60" data-item="河边小盆栽">60 枚</button>
-          </div>
-          <div class="shopitem">
-            <svg viewBox="0 0 48 48"><rect x="20" y="6" width="8" height="5" rx="2" fill="#8a5f30"/><rect x="14" y="10" width="20" height="28" rx="9" fill="#f7c948"/><rect x="12" y="20" width="24" height="3.5" rx="1.5" fill="#e09a1c"/></svg>
-            <div class="sm"><h4>暖光纸灯笼</h4><p>傍晚自动亮起</p></div>
-            <button class="btn-buy" data-price="120" data-item="暖光纸灯笼">120 枚</button>
-          </div>
-          <div class="shopitem">
-            <svg viewBox="0 0 48 48"><ellipse cx="21" cy="32" rx="15" ry="11" fill="#ffd95b"/><path d="M7 32a14 10 0 0 0 28 0z" fill="#f3c12f" opacity=".55"/><path d="M8 28q-5 0-6 3.4 3.4 1.2 6.6-1z" fill="#ffe27a"/><path d="M15 30q6.5-5.2 13.5-1.4-4.6 5-13.5 1.4z" fill="#f7c948"/><circle cx="33" cy="18" r="9.2" fill="#ffe27a"/><path d="M32 9.2q.8-3 3.2-2.2-1.2 1.6-.6 3.2z" fill="#f7c948"/><circle cx="34.6" cy="16.4" r="2.1" fill="#43341f"/><circle cx="35.4" cy="15.6" r=".75" fill="#fff"/><path d="M41 17.6q6 -.6 6 2.3 0 2.7-6 1.6z" fill="#f0892b"/><path d="M41.4 20q2.8 .3 5.2 .1" stroke="#d2731f" stroke-width=".9" fill="none"/></svg>
-            <div class="sm"><h4>邀请小黄鸭来住</h4><p>解锁新图鉴伙伴</p></div>
-            <button class="btn-buy" data-price="200" data-item="小黄鸭" data-unlock="duck">200 枚</button>
-          </div>
+          </section>
         </div>
       </section>
 
@@ -305,6 +289,18 @@
             <div><em>柚子 ×3</em>零食</div>
           </div>
           <button class="btn-ok" id="rewardOk">收下</button>
+        </div>
+      </div>
+
+      <div class="sticker-reward" id="stickerReward" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="stickerRewardTitle">
+        <div class="reward-confetti" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="reward-card">
+          <span class="reward-spark" aria-hidden="true">✦</span>
+          <p>新贴纸解锁</p>
+          <img data-reward-image alt="">
+          <h2 id="stickerRewardTitle" data-reward-name></h2>
+          <b data-reward-rarity></b>
+          <button type="button" data-reward-close>收进贴纸墙</button>
         </div>
       </div>
 
@@ -459,6 +455,12 @@
 <script src="js/api.js"></script>
 <script src="js/store.js"></script>
 <script src="js/draft.js"></script>
+<script src="js/sticker-catalog.js"></script>
+<script src="js/sticker-model.js"></script>
+<script src="js/sticker-achievements.js"></script>
+<script src="js/sticker-store.js"></script>
+<script src="js/sticker-reward.js"></script>
+<script src="js/sticker-hall.js"></script>
 <script src="js/main.js"></script>
 <script src="js/account.js"></script>
 <script src="js/profile.js"></script>
